@@ -12,10 +12,10 @@ var authenticateEndpoint = oauth1.Endpoint{
 	AccessTokenURL:  "https://api.discogs.com/oauth/access_token",
 }
 
-//GenerateLoginURL generates a URL to login by
-func (d *Discogs) GetLoginURL() (string, string, error) {
+// GenerateLoginURL generates a URL to login by
+func (d *Discogs) GetLoginURL() (string, string, string, error) {
 	if d.callback == "" {
-		return "", "", status.Errorf(codes.FailedPrecondition, "unable to get login url without api params (missing callback)")
+		return "", "", "", status.Errorf(codes.FailedPrecondition, "unable to get login url without api params (missing callback)")
 	}
 	config :=
 		&oauth1.Config{
@@ -24,13 +24,14 @@ func (d *Discogs) GetLoginURL() (string, string, error) {
 			CallbackURL:    d.callback,
 			Endpoint:       authenticateEndpoint,
 		}
+
 	requestToken, secret, err := config.RequestToken()
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	authorizationURL, err := config.AuthorizationURL(requestToken)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	return authorizationURL.String(), secret, nil
+	return authorizationURL.String(), requestToken, secret, nil
 }
