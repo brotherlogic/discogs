@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package discogs;
+
+option go_package = "github.com/brotherlogic/discogs/proto";
+
+message User {
+    int32 discogs_user_id = 1;
+    string username = 2;
+    
+    string user_token = 3;
+    string user_secret = 4;
+}
