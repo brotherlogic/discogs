@@ -17,7 +17,7 @@ type DiscogsUser struct {
 	CurrencyAbbr string `json:"curr_abbr"`
 }
 
-func (d *Discogs) getDiscogsUser() *DiscogsUser {
+func (d *Discogs) GetDiscogsUser() *DiscogsUser {
 	user := &DiscogsUser{}
 	d.makeDiscogsRequest("GET", "oauth/identity", "", user)
 	return user
