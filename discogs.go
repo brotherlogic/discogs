@@ -42,3 +42,9 @@ func DiscogsWithAuth(key, secret, callback string) *Discogs {
 		callback: callback,
 	}
 }
+
+func DiscogsWithToken(token, secret string) *Discogs {
+	return &Discogs{
+		getter: &oauthGetter{key: token, secret: secret},
+	}
+}
