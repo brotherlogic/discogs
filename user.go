@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -17,7 +18,7 @@ type DiscogsUser struct {
 	CurrencyAbbr string `json:"curr_abbr"`
 }
 
-func (d *Discogs) GetDiscogsUser() *DiscogsUser {
+func (d *Discogs) GetDiscogsUser(ctx context.Context) *DiscogsUser {
 	user := &DiscogsUser{}
 	d.makeDiscogsRequest("GET", "oauth/identity", "", user)
 	return user
