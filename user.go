@@ -9,6 +9,8 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	pb "github.com/brotherlogic/discogs/proto"
 )
 
 type DiscogsUser struct {
@@ -18,10 +20,13 @@ type DiscogsUser struct {
 	CurrencyAbbr string `json:"curr_abbr"`
 }
 
-func (d *Discogs) GetDiscogsUser(ctx context.Context) *DiscogsUser {
+func (d *Discogs) GetDiscogsUser(ctx context.Context) *pb.User {
 	user := &DiscogsUser{}
 	d.makeDiscogsRequest("GET", "oauth/identity", "", user)
-	return user
+	return &pb.User{
+		Username:      user.Username,
+		DiscogsUserId: user.ID,
+	}
 }
 func (d *Discogs) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
 	fullPath := fmt.Sprintf("https://api.discogs.com/%v", path)

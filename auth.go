@@ -2,9 +2,6 @@ package discogs
 
 import (
 	"context"
-	"fmt"
-
-	pb "github.com/brotherlogic/discogs/proto"
 
 	"github.com/dghubble/oauth1"
 	"google.golang.org/grpc/codes"
@@ -42,7 +39,7 @@ func (d *Discogs) GetLoginURL() (string, string, string, error) {
 }
 
 // HandleDiscogsResponse handles the response from discogs on the last oauth step
-func (d *Discogs) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (*pb.User, error) {
+func (d *Discogs) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error) {
 	config :=
 		&oauth1.Config{
 			ConsumerKey:    d.key,
@@ -51,13 +48,5 @@ func (d *Discogs) HandleDiscogsResponse(ctx context.Context, secret, token, veri
 			Endpoint:       authenticateEndpoint,
 		}
 
-	ntoken, nsecret, err := config.AccessToken(token, secret, verifier)
-	if err != nil {
-		return nil, fmt.Errorf("unable to get token: %v", err)
-	}
-
-	return &pb.User{
-		UserToken:  ntoken,
-		UserSecret: nsecret,
-	}, nil
+	return config.AccessToken(token, secret, verifier)
 }
