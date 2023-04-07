@@ -77,7 +77,7 @@ func (d *Discogs) makeDiscogsRequest(rtype, path string, data string, obj interf
 		return err
 	}
 
-	log.Printf("GOT BODY: %v", body)
+	log.Printf("GOT BODY: %v", string(body))
 	if len(body) > 0 {
 		err = json.Unmarshal(body, obj)
 		if err != nil {
