@@ -43,8 +43,14 @@ func DiscogsWithAuth(key, secret, callback string) *Discogs {
 	}
 }
 
-func DiscogsWithToken(token, secret string) *Discogs {
+func DiscogsWithToken(token, secret string, consumerKey, consumerToken, callback string) *Discogs {
 	return &Discogs{
-		getter: &oauthGetter{key: token, secret: secret},
+		getter: &oauthGetter{key: token, secret: secret,
+			config: oauth1.Config{
+				ConsumerKey:    consumerKey,
+				ConsumerSecret: consumerToken,
+				CallbackURL:    callback,
+				Endpoint:       authenticateEndpoint},
+		},
 	}
 }
