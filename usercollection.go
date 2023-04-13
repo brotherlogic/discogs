@@ -3,8 +3,11 @@ package discogs
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Pagination struct {
@@ -15,6 +18,7 @@ type Pagination struct {
 type CollectionResponse struct {
 	Pagination Pagination
 	Releases   []CollectionRelease
+	Message    string
 }
 
 type CollectionRelease struct {
@@ -29,6 +33,12 @@ func (d *Discogs) GetCollection(ctx context.Context, user *pb.User, page int32) 
 	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", user.GetUsername(), page), "", cr)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if len(cr.Message) > 0 {
+		if strings.Contains(cr.Message, "is outside of valid range") {
+			return nil, nil, status.Errorf(codes.OutOfRange, cr.Message)
+		}
 	}
 
 	var rs []*pb.Release
