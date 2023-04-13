@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func GetTestDiscogs() *Discogs {
@@ -74,5 +76,15 @@ func TestGetCollection(t *testing.T) {
 
 	if !found {
 		t.Errorf("Release 570258 was not found")
+	}
+}
+
+func TestGetCollectionPageOutOfBounds(t *testing.T) {
+	td := GetTestDiscogs()
+
+	coll, pag, err := td.GetCollection(context.Background(), &pb.User{Username: "brotherlogic"}, 100)
+
+	if status.Code(err) != codes.OutOfRange {
+		t.Fatalf("Did not return outof of range: %v -> %v,%v", err, coll, pag)
 	}
 }
