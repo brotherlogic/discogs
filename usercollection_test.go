@@ -85,6 +85,6 @@ func TestGetCollectionPageOutOfBounds(t *testing.T) {
 	coll, pag, err := td.GetCollection(context.Background(), &pb.User{Username: "brotherlogic"}, 100)
 
 	if status.Code(err) != codes.OutOfRange {
-		t.Fatalf("Did not return outof of range: %v -> %v,%v", err, coll, pag)
+		t.Fatalf("Did not return out of of range: %v -> %v,%v", err, coll, pag)
 	}
 }
