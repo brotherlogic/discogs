@@ -14,6 +14,10 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 	return int32(10)
 }
 
+func (t *TestDiscogsClient) ForUser(token, secret string) Discogs {
+	return t
+}
+
 func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	if t.collectionRecords == nil {
 		t.collectionRecords = make([]*pb.Release, 0)
