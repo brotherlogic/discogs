@@ -15,7 +15,7 @@ type Discogs interface {
 
 	GetDiscogsUser(ctx context.Context) (*pb.User, error)
 
-	GetCollection(ctx context.Context, user *pb.User, page int32) ([]*pb.Release, *pb.Pagination, error)
+	GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error)
 }
 
 type prodClient struct {
@@ -24,6 +24,7 @@ type prodClient struct {
 	callback string
 
 	getter clientGetter
+	user   *pb.User
 }
 
 type clientGetter interface {

@@ -16,6 +16,7 @@ import (
 func GetTestDiscogs() Discogs {
 	return &prodClient{
 		getter: &testGetter{},
+		user:   &pb.User{Username: "brotherlogic"},
 	}
 }
 
@@ -48,7 +49,7 @@ func (t *tClient) Post(url, contentType string, body io.Reader) (*http.Response,
 func TestGetCollection(t *testing.T) {
 	td := GetTestDiscogs()
 
-	coll, pag, err := td.GetCollection(context.Background(), &pb.User{Username: "brotherlogic"}, 1)
+	coll, pag, err := td.GetCollection(context.Background(), 1)
 
 	if err != nil {
 		t.Fatalf("Unable to retrieve collection: %v -> %v,%v", err, coll, pag)
@@ -82,7 +83,7 @@ func TestGetCollection(t *testing.T) {
 func TestGetCollectionPageOutOfBounds(t *testing.T) {
 	td := GetTestDiscogs()
 
-	coll, pag, err := td.GetCollection(context.Background(), &pb.User{Username: "brotherlogic"}, 100)
+	coll, pag, err := td.GetCollection(context.Background(), 100)
 
 	if status.Code(err) != codes.OutOfRange {
 		t.Fatalf("Did not return out of of range: %v -> %v,%v", err, coll, pag)
