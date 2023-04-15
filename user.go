@@ -20,7 +20,7 @@ type DiscogsUser struct {
 	CurrencyAbbr string `json:"curr_abbr"`
 }
 
-func (d *Discogs) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
+func (d *prodClient) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
 	user := &DiscogsUser{}
 	err := d.makeDiscogsRequest("GET", "oauth/identity", "", user)
 	return &pb.User{
@@ -28,7 +28,7 @@ func (d *Discogs) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
 		DiscogsUserId: user.ID,
 	}, err
 }
-func (d *Discogs) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
+func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
 	fullPath := fmt.Sprintf("https://api.discogs.com/%v", path)
 	httpClient := d.getter.get()
 

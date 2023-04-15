@@ -28,7 +28,7 @@ type CollectionRelease struct {
 	Rating     int `json:"rating"`
 }
 
-func (d *Discogs) GetCollection(ctx context.Context, user *pb.User, page int32) ([]*pb.Release, *pb.Pagination, error) {
+func (d *prodClient) GetCollection(ctx context.Context, user *pb.User, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	cr := &CollectionResponse{}
 	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", user.GetUsername(), page), "", cr)
 	if err != nil {

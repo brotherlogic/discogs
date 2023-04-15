@@ -15,7 +15,7 @@ var authenticateEndpoint = oauth1.Endpoint{
 }
 
 // GenerateLoginURL generates a URL to login by
-func (d *Discogs) GetLoginURL() (string, string, string, error) {
+func (d *prodClient) GetLoginURL() (string, string, string, error) {
 	if d.callback == "" {
 		return "", "", "", status.Errorf(codes.FailedPrecondition, "unable to get login url without api params (missing callback)")
 	}
@@ -39,7 +39,7 @@ func (d *Discogs) GetLoginURL() (string, string, string, error) {
 }
 
 // HandleDiscogsResponse handles the response from discogs on the last oauth step
-func (d *Discogs) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error) {
+func (d *prodClient) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error) {
 	config :=
 		&oauth1.Config{
 			ConsumerKey:    d.key,
