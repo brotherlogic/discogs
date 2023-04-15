@@ -13,8 +13,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func GetTestDiscogs() *Discogs {
-	return &Discogs{
+func GetTestDiscogs() Discogs {
+	return &prodClient{
 		getter: &testGetter{},
 	}
 }
