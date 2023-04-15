@@ -16,6 +16,8 @@ type Discogs interface {
 	GetDiscogsUser(ctx context.Context) (*pb.User, error)
 
 	GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error)
+
+	GetUserId() int32
 }
 
 type prodClient struct {
@@ -25,6 +27,10 @@ type prodClient struct {
 
 	getter clientGetter
 	user   *pb.User
+}
+
+func (d *prodClient) GetUserId() int32 {
+	return d.user.GetDiscogsUserId()
 }
 
 type clientGetter interface {
