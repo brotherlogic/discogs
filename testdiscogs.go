@@ -32,6 +32,6 @@ func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error
 	return nil, nil
 }
 
-func (t *TestDiscogsClient) GetCollection(ctx context.Context, user *pb.User, page int32) ([]*pb.Release, *pb.Pagination, error) {
+func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	return t.collectionRecords, &pb.Pagination{}, nil
 }
