@@ -35,17 +35,22 @@ func (d *prodClient) GetUserId() int32 {
 
 type clientGetter interface {
 	get() myClient
+	config() oauth1.Config
 }
 
 type oauthGetter struct {
 	key    string
 	secret string
-	config oauth1.Config
+	conf   oauth1.Config
 }
 
 func (o *oauthGetter) get() myClient {
 	oauthToken := oauth1.NewToken(o.key, o.secret)
-	return o.config.Client(oauth1.NoContext, oauthToken)
+	return o.conf.Client(oauth1.NoContext, oauthToken)
+}
+
+func (o *oauthGetter) config() oauth1.Config {
+	return o.conf
 }
 
 type myClient interface {
@@ -61,14 +66,10 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 	}
 }
 
-func DiscogsWithToken(token, secret string, consumerKey, consumerToken, callback string) Discogs {
+func (p *prodClient) ForUser(token, secret string) Discogs {
 	return &prodClient{
 		getter: &oauthGetter{key: token, secret: secret,
-			config: oauth1.Config{
-				ConsumerKey:    consumerKey,
-				ConsumerSecret: consumerToken,
-				CallbackURL:    callback,
-				Endpoint:       authenticateEndpoint},
+			conf: p.getter.config(),
 		},
 	}
 }

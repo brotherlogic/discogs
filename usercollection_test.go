@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"github.com/dghubble/oauth1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -24,6 +25,10 @@ type testGetter struct{}
 
 func (tg *testGetter) get() myClient {
 	return &tClient{}
+}
+
+func (tg *testGetter) config() oauth1.Config {
+	return oauth1.Config{}
 }
 
 type tClient struct{}
