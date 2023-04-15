@@ -18,6 +18,8 @@ type Discogs interface {
 	GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error)
 
 	GetUserId() int32
+
+	ForUser(token, secret string) Discogs
 }
 
 type prodClient struct {
