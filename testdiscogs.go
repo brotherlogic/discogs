@@ -14,7 +14,7 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 	return int32(10)
 }
 
-func (t *TestDiscogsClient) ForUser(token, secret string) Discogs {
+func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 	return t
 }
 
