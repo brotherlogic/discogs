@@ -65,6 +65,12 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 		key:      key,
 		secret:   secret,
 		callback: callback,
+		getter: &oauthGetter{conf: oauth1.Config{
+			ConsumerKey:    key,
+			ConsumerSecret: secret,
+			CallbackURL:    callback,
+			Endpoint:       authenticateEndpoint,
+		}},
 	}
 }
 
