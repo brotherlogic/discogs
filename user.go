@@ -63,7 +63,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	}
 
 	if resp.StatusCode == 404 {
-		return status.Errorf(codes.NotFound, "Unable to locate sale")
+		return status.Errorf(codes.NotFound, "Unable to locate sale - %v", fullPath)
 	}
 
 	// Throttling
