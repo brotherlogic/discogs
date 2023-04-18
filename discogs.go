@@ -19,7 +19,7 @@ type Discogs interface {
 
 	GetUserId() int32
 
-	ForUser(token, secret string) Discogs
+	ForUser(user *pb.User) Discogs
 }
 
 type prodClient struct {
@@ -74,10 +74,11 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 	}
 }
 
-func (p *prodClient) ForUser(token, secret string) Discogs {
+func (p *prodClient) ForUser(user *pb.User) Discogs {
 	return &prodClient{
-		getter: &oauthGetter{key: token, secret: secret,
+		getter: &oauthGetter{key: user.GetUserToken(), secret: user.GetUserSecret(),
 			conf: p.getter.config(),
 		},
+		user: user,
 	}
 }

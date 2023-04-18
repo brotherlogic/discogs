@@ -29,7 +29,7 @@ func (d *prodClient) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
 	}, err
 }
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
-	fullPath := fmt.Sprintf("https://api.discogs.com/%v", path)
+	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 
 	if rtype == "POST" {
