@@ -7,5 +7,5 @@ import (
 
 func TestDiscogsTestClient(t *testing.T) {
 	var d Discogs = &TestDiscogsClient{}
-	log.Printf("%v", d)
+	log.Printf("TEST %v", d)
 }

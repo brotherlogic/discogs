@@ -11,8 +11,8 @@ import (
 )
 
 type Pagination struct {
-	pages int
-	page  int
+	Pages int `json:"pages"`
+	Page  int `json:"page"`
 }
 
 type CollectionResponse struct {
@@ -51,5 +51,5 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 		})
 	}
 
-	return rs, &pb.Pagination{Page: int32(cr.Pagination.page), Pages: int32(cr.Pagination.pages)}, nil
+	return rs, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil
 }
