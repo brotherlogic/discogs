@@ -64,6 +64,10 @@ func TestGetCollection(t *testing.T) {
 		t.Errorf("Bad collection size, expected 50, got %v", len(coll))
 	}
 
+	if pag.GetPages() != 46 {
+		t.Errorf("Bad pagination return: %v", pag)
+	}
+
 	found := false
 	for _, release := range coll {
 		if release.GetId() == 570258 {
