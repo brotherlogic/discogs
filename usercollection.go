@@ -3,6 +3,7 @@ package discogs
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	pb "github.com/brotherlogic/discogs/proto"
@@ -22,10 +23,21 @@ type CollectionResponse struct {
 }
 
 type CollectionRelease struct {
-	Id         int
-	InstanceId int `json:"instance_id"`
-	FolderId   int `json:"folder_id"`
-	Rating     int `json:"rating"`
+	Id               int
+	InstanceId       int `json:"instance_id"`
+	FolderId         int `json:"folder_id"`
+	Rating           int
+	BasicInformation BasicInformation `json:"basic_information"`
+}
+
+type BasicInformation struct {
+	Formats []Format
+}
+
+type Format struct {
+	Descriptions []string
+	Name         string
+	Qty          string
 }
 
 func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
@@ -43,12 +55,25 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 
 	var rs []*pb.Release
 	for _, release := range cr.Releases {
-		rs = append(rs, &pb.Release{
+		r := &pb.Release{
 			InstanceId: int64(release.InstanceId),
 			Id:         int64(release.Id),
 			FolderId:   int32(release.FolderId),
 			Rating:     int32(release.Rating),
-		})
+		}
+
+		var formats []*pb.Format
+		for _, form := range release.BasicInformation.Formats {
+			val, _ := strconv.ParseInt(form.Qty, 10, 32)
+			formats = append(formats, &pb.Format{
+				Name:         form.Name,
+				Descriptions: form.Descriptions,
+				Quantity:     int32(val),
+			})
+		}
+		r.Formats = formats
+
+		rs = append(rs, r)
 	}
 
 	return rs, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil

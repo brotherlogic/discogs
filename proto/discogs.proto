@@ -9,6 +9,12 @@ message Pagination {
     int32 pages = 2;    
 }
 
+message Format {
+    repeated string descriptions = 1;
+    string name = 2;
+    int32 quantity = 3;
+}
+
 message User {
     int32 discogs_user_id = 1;
     string username = 2;
@@ -22,4 +28,6 @@ message Release {
     int64 instance_id = 2;
     int32 folder_id = 3;
     int32 rating = 4;
+
+    repeated Format formats = 5;
 }

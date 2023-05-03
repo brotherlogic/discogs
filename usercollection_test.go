@@ -81,6 +81,16 @@ func TestGetCollection(t *testing.T) {
 			if release.GetRating() != 0 {
 				t.Errorf("Bad rating: %v", release)
 			}
+
+			foundVinyl := false
+			for _, format := range release.GetFormats() {
+				if format.GetName() == "Vinyl" && format.Quantity == 1 {
+					foundVinyl = true
+				}
+			}
+			if !foundVinyl {
+				t.Errorf("Unable to find vinyl: %v", release)
+			}
 		}
 	}
 
