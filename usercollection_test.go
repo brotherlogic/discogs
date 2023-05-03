@@ -84,7 +84,7 @@ func TestGetCollection(t *testing.T) {
 
 			foundVinyl := false
 			for _, format := range release.GetFormats() {
-				if format.GetName() == "Vinyl" {
+				if format.GetName() == "Vinyl" && format.Quantity == 1 {
 					foundVinyl = true
 				}
 			}
