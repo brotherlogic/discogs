@@ -26,6 +26,8 @@ type Discogs interface {
 	GetUserId() int32
 
 	ForUser(user *pb.User) Discogs
+
+	GetFields(ctx context.Context) ([]*pb.Field, error)
 }
 
 type prodClient struct {

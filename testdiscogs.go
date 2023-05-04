@@ -18,6 +18,10 @@ func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 	return t
 }
 
+func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
+	return []*pb.Field{}, nil
+}
+
 func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	if t.collectionRecords == nil {
 		t.collectionRecords = make([]*pb.Release, 0)
