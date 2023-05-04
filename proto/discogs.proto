@@ -4,6 +4,11 @@ package discogs;
 
 option go_package = "github.com/brotherlogic/discogs/proto";
 
+message Field {
+    int32 id = 1;
+    string name = 2;
+}
+
 message Pagination {
     int32 page = 1;
     int32 pages = 2;    
