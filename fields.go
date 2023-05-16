@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"encoding/json"
+
 	pb "github.com/brotherlogic/discogs/proto"
 )
 
@@ -32,4 +34,15 @@ func (d *prodClient) GetFields(ctx context.Context) ([]*pb.Field, error) {
 	}
 
 	return fields, nil
+}
+
+type fieldUpdate struct {
+	Value string `json:"value"`
+}
+
+func (d *prodClient) SetField(ctx context.Context, r *pb.Release, fnum int, value string) error {
+	cr := &FieldsResponse{}
+	vjson := &fieldUpdate{Value: value}
+	vstr, _ := json.Marshal(vjson)
+	return d.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/0/releases/%v/instances/%v/fields/%v", d.user.GetUsername(), r.GetId(), r.GetInstanceId(), fnum), string(vstr), cr)
 }
