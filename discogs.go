@@ -28,6 +28,7 @@ type Discogs interface {
 	ForUser(user *pb.User) Discogs
 
 	GetFields(ctx context.Context) ([]*pb.Field, error)
+	SetField(ctx context.Context, r *pb.Release, fnum int, value string) error
 }
 
 type prodClient struct {

@@ -22,6 +22,10 @@ func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
 	return []*pb.Field{}, nil
 }
 
+func (t *TestDiscogsClient) SetField(ctx context.Context, r *pb.Release, fnum int, value string) error {
+	return nil
+}
+
 func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	if t.collectionRecords == nil {
 		t.collectionRecords = make([]*pb.Release, 0)
