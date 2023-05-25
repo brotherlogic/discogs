@@ -15,7 +15,7 @@ type DiscogsUser struct {
 
 func (d *prodClient) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
 	user := &DiscogsUser{}
-	err := d.makeDiscogsRequest("GET", "oauth/identity", "", user)
+	err := d.makeDiscogsRequest("GET", "/oauth/identity", "", user)
 	return &pb.User{
 		Username:      user.Username,
 		DiscogsUserId: user.ID,

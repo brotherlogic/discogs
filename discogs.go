@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
@@ -93,6 +94,9 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 }
 
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
+	if !strings.HasPrefix(path, "/") {
+		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
+	}
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 
