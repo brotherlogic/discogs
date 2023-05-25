@@ -87,6 +87,9 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 
 func (p *prodClient) ForUser(user *pb.User) Discogs {
 	return &prodClient{
+		key:      p.key,
+		secret:   p.secret,
+		callback: p.callback,
 		getter: &oauthGetter{key: user.GetUserToken(), secret: user.GetUserSecret(),
 			conf: p.getter.config(),
 		},
@@ -124,7 +127,6 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 			}
 		}
 		return nil
-
 	}
 	resp, err := httpClient.Get(fullPath)
 	if err != nil {
