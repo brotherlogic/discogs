@@ -3,6 +3,7 @@ package discogs
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"encoding/json"
 
@@ -19,6 +20,7 @@ type Field struct {
 }
 
 func (d *prodClient) GetFields(ctx context.Context) ([]*pb.Field, error) {
+	log.Printf("USER: %v with %+v", d.user, d)
 	cr := &FieldsResponse{}
 	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/fields", d.user.GetUsername()), "", cr)
 	if err != nil {
