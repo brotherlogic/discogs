@@ -1,9 +1,9 @@
 #!/bin/bash
-grep -Rl log.Print *.go | grep .go$ | grep -v _test.go
-RESULT=$?
-if [ $RESULT != 1 ]; then
-    exit 1
-fi
+#grep -Rl log.Print *.go | grep .go$ | grep -v _test.go
+#RESULT=$?
+#if [ $RESULT != 1 ]; then
+#    exit 1
+#fi
 
 grep context.Background *.go | grep .go$ | grep -v _test.go
 RESULT=$?

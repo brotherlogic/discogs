@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 
@@ -144,10 +145,12 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return err
 	}
 
+	log.Printf("GET %v -> %v", fullPath, string(body))
+
 	if len(body) > 0 {
 		err = json.Unmarshal(body, obj)
 		if err != nil {
-			return fmt.Errorf("Unmarshal error (processing %v): %v", string(body), err)
+			return fmt.Errorf("unmarshal error (processing %v): %v", string(body), err)
 		}
 	}
 
