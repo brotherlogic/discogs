@@ -91,6 +91,17 @@ func TestGetCollection(t *testing.T) {
 			if !foundVinyl {
 				t.Errorf("Unable to find vinyl: %v", release)
 			}
+
+			foundAnkst := false
+			for _, label := range release.GetLabels() {
+				if label.GetName() == "Ankst" && label.Catno == "ANKST 059" {
+					foundAnkst = true
+				}
+			}
+			if !foundAnkst {
+				t.Errorf("The label was not found: %v", release)
+			}
+
 		}
 	}
 
