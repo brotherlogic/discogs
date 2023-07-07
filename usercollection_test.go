@@ -94,7 +94,7 @@ func TestGetCollection(t *testing.T) {
 
 			foundAnkst := false
 			for _, label := range release.GetLabels() {
-				if label.GetName() == "Ankst" && label.Catno == "ANKST 059" {
+				if label.GetName() == "Ankst" && label.Catno == "ANKST 059" && label.Id == 33378 {
 					foundAnkst = true
 				}
 			}
