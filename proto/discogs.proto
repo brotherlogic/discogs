@@ -35,4 +35,11 @@ message Release {
     int32 rating = 4;
 
     repeated Format formats = 5;
+    repeated Label labels = 6;
+}
+
+message Label {
+    int32 id = 1;
+    string name = 2;
+    string catno = 3;
 }

@@ -32,6 +32,13 @@ type CollectionRelease struct {
 
 type BasicInformation struct {
 	Formats []Format
+	Labels  []Label
+}
+
+type Label struct {
+	Name  string
+	Catno string
+	Id    int
 }
 
 type Format struct {
@@ -72,6 +79,16 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 			})
 		}
 		r.Formats = formats
+
+		var labels []*pb.Label
+		for _, label := range release.BasicInformation.Labels {
+			labels = append(labels, &pb.Label{
+				Name:  label.Name,
+				Catno: label.Catno,
+				Id:    int32(label.Id),
+			})
+		}
+		r.Labels = labels
 
 		rs = append(rs, r)
 	}
