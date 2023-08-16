@@ -8,10 +8,11 @@ import (
 
 type TestDiscogsClient struct {
 	collectionRecords []*pb.Release
+	UserId            int32
 }
 
 func (t *TestDiscogsClient) GetUserId() int32 {
-	return int32(10)
+	return t.UserId
 }
 
 func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
