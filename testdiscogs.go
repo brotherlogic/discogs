@@ -26,6 +26,7 @@ func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
 
 func (t *TestDiscogsClient) SetField(ctx context.Context, r *pb.Release, fnum int, value string) error {
 	t.Fields = append(t.Fields, &pb.Field{Name: value, Id: int32(fnum)})
+	return nil
 }
 
 func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
