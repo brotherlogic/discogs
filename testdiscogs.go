@@ -9,6 +9,7 @@ import (
 type TestDiscogsClient struct {
 	collectionRecords []*pb.Release
 	UserId            int32
+	Fields            []*pb.Field
 }
 
 func (t *TestDiscogsClient) GetUserId() int32 {
@@ -20,10 +21,11 @@ func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 }
 
 func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
-	return []*pb.Field{}, nil
+	return t.Fields, nil
 }
 
 func (t *TestDiscogsClient) SetField(ctx context.Context, r *pb.Release, fnum int, value string) error {
+	t.Fields = append(t.Fields, &pb.Field{Name: value, Id: int32(fnum)})
 	return nil
 }
 
