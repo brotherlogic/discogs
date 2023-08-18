@@ -13,7 +13,7 @@ func TestGetFields(t *testing.T) {
 	fields, err := td.GetFields(context.Background())
 
 	if err != nil {
-		t.Fatalf("Unable to retrieve collection: %v,%v", fields, err)
+		t.Fatalf("unable to retrieve collection: %v,%v", fields, err)
 	}
 
 	var f *pb.Field

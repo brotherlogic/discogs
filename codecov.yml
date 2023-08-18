@@ -1,14 +1,6 @@
 coverage:
   status:
-    project: off
-    patch: off
-
-flag_management:
-  individual_flags:
-    - name: main
-      paths:
-        - /
-      statuses:
-        - type: project
-          target: auto
-          threshold: 1%
+   project:
+      default:
+        target: auto
+        threshold: 1%
