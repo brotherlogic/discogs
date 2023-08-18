@@ -18,7 +18,7 @@ type Folder struct {
 
 func (p *prodClient) GetUserFolders(ctx context.Context) ([]*pb.Folder, error) {
 	gfr := &GetFolderResponse{}
-	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders", p.user.GetUsername()), "", cr)
+	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders", p.user.GetUsername()), "", gfr)
 	if err != nil {
 		return nil, err
 	}
