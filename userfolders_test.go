@@ -25,6 +25,6 @@ func TestGetFolders_Success(t *testing.T) {
 	}
 
 	if !found {
-		t.Errorf("Could not find folder")
+		t.Errorf("could not find folder")
 	}
 }
