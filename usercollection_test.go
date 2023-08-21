@@ -37,7 +37,17 @@ func (t *tClient) Get(url string) (*http.Response, error) {
 	response := &http.Response{}
 	testFile := strings.Replace(strings.Replace(url[23:], "?", "_", -1), "&", "_", -1)
 
-	blah, err := os.Open("testdata" + testFile)
+	stat, err := os.Stat("testdata" + testFile)
+	if err != nil {
+		return nil, err
+	}
+
+	adder := ""
+	if stat.IsDir() {
+		adder = "/FILE"
+	}
+
+	blah, err := os.Open("testdata" + testFile + adder)
 
 	if err != nil {
 		return nil, err
