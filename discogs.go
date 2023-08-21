@@ -30,6 +30,8 @@ type Discogs interface {
 
 	GetFields(ctx context.Context) ([]*pb.Field, error)
 	SetField(ctx context.Context, r *pb.Release, fnum int, value string) error
+
+	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
 }
 
 type prodClient struct {

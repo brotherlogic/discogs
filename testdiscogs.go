@@ -10,6 +10,7 @@ type TestDiscogsClient struct {
 	collectionRecords []*pb.Release
 	UserId            int32
 	Fields            []*pb.Field
+	Folders           []*pb.Folder
 }
 
 func (t *TestDiscogsClient) GetUserId() int32 {
@@ -18,6 +19,10 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 
 func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 	return t
+}
+
+func (t *TestDiscogsClient) GetUserFolders(_ context.Context) ([]*pb.Folder, error) {
+	return t.Folders, nil
 }
 
 func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
