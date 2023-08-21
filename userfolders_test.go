@@ -10,11 +10,11 @@ func TestGetFolders_Success(t *testing.T) {
 
 	folders, err := d.GetUserFolders(context.Background())
 	if err != nil {
-		t.Fatalf("Bad folder return: %v", err)
+		t.Fatalf("bad folder return: %v", err)
 	}
 
 	if len(folders) == 0 {
-		t.Fatalf("No folders returned")
+		t.Fatalf("no folders returned: %v", folders)
 	}
 
 	found := false
