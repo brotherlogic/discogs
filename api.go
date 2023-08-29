@@ -12,6 +12,12 @@ type SaleParams struct {
 	SleeveCondition string
 	Price           int32
 	Comments        string
+	AllowOffers     bool
+	Status          string
+	ExternalId      string
+	Location        string
+	Weight          int32
+	FormatQuantity  int32
 }
 
 type Discogs interface {
