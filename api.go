@@ -12,6 +12,12 @@ type SaleParams struct {
 	SleeveCondition string
 	Price           int32
 	Comments        string
+	AllowOffers     bool
+	Status          string
+	ExternalId      string
+	Location        string
+	Weight          int32
+	FormatQuantity  int32
 }
 
 type Discogs interface {
@@ -31,5 +37,5 @@ type Discogs interface {
 
 	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
 
-	CreateSale(ctx context.Context, params saleParams) (int64, error)
+	CreateSale(ctx context.Context, params SaleParams) (int64, error)
 }
