@@ -6,6 +6,14 @@ import (
 	pb "github.com/brotherlogic/discogs/proto"
 )
 
+type SaleParams struct {
+	ReleaseId       int32
+	Condition       string
+	SleeveCondition string
+	Price           int32
+	Comments        string
+}
+
 type Discogs interface {
 	GetLoginURL() (string, string, string, error)
 	HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error)
@@ -22,4 +30,6 @@ type Discogs interface {
 	SetField(ctx context.Context, r *pb.Release, fnum int, value string) error
 
 	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
+
+	CreateSale(ctx context.Context, params saleParams) (int64, error)
 }
