@@ -31,5 +31,5 @@ type Discogs interface {
 
 	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
 
-	CreateSale(ctx context.Context, params saleParams) (int64, error)
+	CreateSale(ctx context.Context, params SaleParams) (int64, error)
 }
