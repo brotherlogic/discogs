@@ -17,6 +17,10 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 	return t.UserId
 }
 
+func (t *TestDiscogsClient) CreateSale(ctx context.Context, params SaleParams) (int64, error) {
+	return 1234, nil
+}
+
 func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 	return t
 }
