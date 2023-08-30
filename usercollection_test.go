@@ -2,6 +2,8 @@ package discogs
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"io"
 	"net/http"
 	"os"
@@ -57,8 +59,18 @@ func (t *tClient) Get(url string) (*http.Response, error) {
 	return response, nil
 }
 
+func hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
+}
+
 func (t *tClient) Post(url, contentType string, body io.Reader) (*http.Response, error) {
-	return t.Get(url)
+	buf := new(strings.Builder)
+	_, err := io.Copy(buf, body)
+	if err != nil {
+		return nil, err
+	}
+	return t.Get(url + "_" + hash(buf.String()))
 }
 
 func TestGetCollection(t *testing.T) {

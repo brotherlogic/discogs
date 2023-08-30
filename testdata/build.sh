@@ -1,5 +1,5 @@
 mkdir -p marketplace/
-curl -X POST -H "Content-Type:application/json" -d '{"release_id": 27962688, "condition": "Mint (M)", "price": 100.23}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings?token=$1"  | sed "s/$1/token/g" > marketplace/listings
+curl -X POST -H "Content-Type:application/json" -d '{"release_id": 27962688, "condition": "Mint (M)", "price": 100.23}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings?token=$1"  | sed "s/$1/token/g" > marketplace/listings_5a24aa6a7c10c49c2d9aeccbc7aba0c8
 exit
 
 mkdir -p users/brotherlogic/collection/
