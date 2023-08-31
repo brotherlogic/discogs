@@ -20,7 +20,12 @@ type SaleJson struct {
 }
 
 type GetSaleResponse struct {
-	Status string
+	Status  string
+	Release Release
+}
+
+type Release struct {
+	Id int64
 }
 
 func convertStatus(status string) pb.SaleStatus {
@@ -43,7 +48,8 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 	}
 
 	return &pb.SaleItem{
-		Status: convertStatus(gsr.Status),
+		Status:    convertStatus(gsr.Status),
+		ReleaseId: (gsr.Release.Id),
 	}, nil
 }
 

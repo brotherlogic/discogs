@@ -64,5 +64,5 @@ message SaleItem {
     int64 sale_id = 1;
     SaleStatus status = 2;
     Price price = 3;
-    int32 release_id = 4;
+    int64 release_id = 4;
 }
