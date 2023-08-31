@@ -1,3 +1,7 @@
+mkdir -p marketplace/listings
+curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings/2695553917?token=$1"  | sed "s/$1/token/g" > marketplace/listings/2695553917
+exit
+
 mkdir -p marketplace/
 curl -X POST -H "Content-Type:application/json" -d '{"release_id":27962688,"condition":"Mint (M)","price":100.23}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings?token=$1"  | sed "s/$1/token/g" > marketplace/listings_0910013e6acd173c477260d9cd9ac074
 exit
