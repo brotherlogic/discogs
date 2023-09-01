@@ -1,3 +1,7 @@
+mkdir -p users/brotherlogic/collection/folders/3578980/releases/27915987/instances/
+curl -X POST -H "Content-Type:application/json" -d '{"folder_id":242017}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/3578980/releases/27915987/instances/1427071368?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders/242017/releases/27915987/instances/1427071368_ca8608b169103faf5c4f00bbea8a508c
+exit
+
 mkdir -p marketplace/listings
 curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings/2695553917?token=$1"  | sed "s/$1/token/g" > marketplace/listings/2695553917
 exit
