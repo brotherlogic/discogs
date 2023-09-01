@@ -65,6 +65,38 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 	return listings, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil
 }
 
+type Price struct {
+	Currency string
+	Value    float32
+}
+
+type OrderItem struct {
+	Release Release
+	Price   Price
+	Id      int64
+}
+
+type Order struct {
+	Id     string
+	Status string
+	Items  []OrderItem
+}
+
+func (p *prodClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, error) {
+	gsURL := fmt.Sprintf("/marketplace/orders/%v", orderId)
+
+	gsr := &Order{}
+	err := p.makeDiscogsRequest("GET", gsURL, "", gsr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Order{
+		Id:     gsr.Id,
+		Status: gsr.Status,
+	}, nil
+}
+
 func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
 	gsURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 

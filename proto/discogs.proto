@@ -77,3 +77,8 @@ message Want {
     string title = 2;
     repeated Artist artists = 3;
 }
+
+message Order {
+    string id = 1;
+    string status = 2;
+}
