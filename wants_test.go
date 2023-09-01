@@ -14,7 +14,7 @@ func TestGetWants_Success(t *testing.T) {
 		t.Fatalf("Bad list sales: %v", err)
 	}
 
-	if len(wants) != 32 {
+	if len(wants) != 32 || pagination.Pages != 1 {
 		t.Errorf("Bad sale return %v -> %v", wants, pagination)
 	}
 }
