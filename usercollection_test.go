@@ -162,3 +162,11 @@ func TestCreateFolder(t *testing.T) {
 		t.Errorf("Bad folder create: %v", folder)
 	}
 }
+
+func TestDeleteFolder(t *testing.T) {
+	td := GetTestDiscogs()
+	err := td.DeleteFolder(context.Background(), 6259627)
+	if err != nil {
+		t.Fatalf("Error deleting folder: %v", err)
+	}
+}

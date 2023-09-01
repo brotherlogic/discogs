@@ -53,6 +53,14 @@ type CreateFolderResponse struct {
 	Name string
 }
 
+type DeleteFolderResponse struct{}
+
+func (d *prodClient) DeleteFolder(ctx context.Context, folderId int32) error {
+	return d.makeDiscogsRequest("DELETE", fmt.Sprintf("/users/%v/collection/folders/%v",
+		d.user.GetUsername(), folderId), "", &DeleteFolderResponse{})
+
+}
+
 func (d *prodClient) CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error) {
 	data := &Folder{
 		Name: folderName,
