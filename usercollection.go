@@ -34,6 +34,7 @@ type CollectionRelease struct {
 type BasicInformation struct {
 	Formats []Format
 	Labels  []Label
+	Title   string
 }
 
 type Label struct {

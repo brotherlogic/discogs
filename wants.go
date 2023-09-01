@@ -21,6 +21,24 @@ type GetWantsResponse struct {
 	Wants      []Want
 }
 
+type AddWantResponse struct {
+	Id               int
+	BasicInformation BasicInformation `json:"basic_information"`
+}
+
+func (p *prodClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
+	cr := &AddWantResponse{}
+	err := p.makeDiscogsRequest("PUT", fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), releaseId), "", cr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Want{
+		Id:    int64(cr.Id),
+		Title: cr.BasicInformation.Title,
+	}, nil
+}
+
 func (p *prodClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
 	cr := &GetWantsResponse{}
 	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/wants?page=%v", p.user.GetUsername(), page), "", cr)

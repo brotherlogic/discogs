@@ -33,6 +33,10 @@ func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.O
 	return &pb.Order{}, nil
 }
 
+func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
+	return &pb.Want{}, nil
+}
+
 func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
 	return &pb.SaleItem{}, nil
 }

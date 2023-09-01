@@ -47,4 +47,5 @@ type Discogs interface {
 	SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error
 
 	GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error)
+	AddWant(ctx context.Context, releaseId int64) (*pb.Want, error)
 }
