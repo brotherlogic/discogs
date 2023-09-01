@@ -67,3 +67,13 @@ message SaleItem {
     Price price = 3;
     int64 release_id = 4;
 }
+
+message Artist {
+    string name = 1;
+}
+
+message Want {
+    int64 id = 1;
+    string title = 2;
+    repeated Artist artists = 3;
+}
