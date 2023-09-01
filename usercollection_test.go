@@ -150,3 +150,15 @@ func TestSetFolder(t *testing.T) {
 		t.Errorf("Error setting folder: %v", err)
 	}
 }
+
+func TestCreateFolder(t *testing.T) {
+	td := GetTestDiscogs()
+	folder, err := td.CreateFolder(context.Background(), "TestFolder")
+	if err != nil {
+		t.Fatalf("Error creating folder: %v", err)
+	}
+
+	if folder.GetName() != "TestFolder" || folder.Id != 6259627 {
+		t.Errorf("Bad folder create: %v", folder)
+	}
+}

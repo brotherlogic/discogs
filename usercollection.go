@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -45,6 +46,32 @@ type Format struct {
 	Descriptions []string
 	Name         string
 	Qty          string
+}
+
+type CreateFolderResponse struct {
+	Id   int
+	Name string
+}
+
+func (d *prodClient) CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error) {
+	data := &Folder{
+		Name: folderName,
+	}
+	v, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	cfr := &CreateFolderResponse{}
+	err = d.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders",
+		d.user.GetUsername()), string(v), cfr)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.Folder{
+		Name: cfr.Name,
+		Id:   int32(cfr.Id),
+	}, nil
 }
 
 func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
