@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	pb "github.com/brotherlogic/discogs/proto"
@@ -18,9 +19,21 @@ type Folder struct {
 	Name string
 }
 
-func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId int64) error {
-	err := p.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v/instances/%v",
-		p.user.GetUsername(), folderId, releaseId, instanceId), "", &SetFolderResponse{})
+type NewFolder struct {
+	FolderId int `json:"folder_id"`
+}
+
+func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
+	data := &NewFolder{
+		FolderId: int(newFolderId),
+	}
+	v, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	err = p.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v/instances/%v",
+		p.user.GetUsername(), folderId, releaseId, instanceId), string(v), &SetFolderResponse{})
 	if err != nil {
 		return err
 	}

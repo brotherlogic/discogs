@@ -25,7 +25,7 @@ func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.Sale
 	return &pb.SaleItem{}, nil
 }
 
-func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId int64) error {
+func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
 	return nil
 }
 

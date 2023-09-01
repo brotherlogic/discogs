@@ -40,5 +40,5 @@ type Discogs interface {
 	CreateSale(ctx context.Context, params SaleParams) (int64, error)
 	GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error)
 
-	SetFolder(ctx context.Context, instanceId, releaseId, folderId int64) error
+	SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error
 }

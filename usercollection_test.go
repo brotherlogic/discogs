@@ -145,7 +145,7 @@ func TestGetCollectionPageOutOfBounds(t *testing.T) {
 func TestSetFolder(t *testing.T) {
 	td := GetTestDiscogs()
 
-	err := td.SetFolder(context.Background(), 1427071368, 27915987, 242017)
+	err := td.SetFolder(context.Background(), 1427071368, 27915987, 3578980, 242017)
 	if err != nil {
 		t.Errorf("Error setting folder: %v", err)
 	}
