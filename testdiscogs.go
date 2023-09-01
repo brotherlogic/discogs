@@ -25,6 +25,10 @@ func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.Sale
 	return &pb.SaleItem{}, nil
 }
 
+func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
+	return []*pb.Want{}, &pb.Pagination{}, nil
+}
+
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
 	return []*pb.SaleItem{}, &pb.Pagination{}, nil
 }

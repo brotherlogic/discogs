@@ -1,4 +1,8 @@
 mkdir -p users/brotherlogic/
+curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/wants?page=1&token=$1"  | sed "s/$1/token/g" > users/brotherlogic/wants_page=1
+exit
+
+mkdir -p users/brotherlogic/
 curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/inventory?page=1&token=$1"  | sed "s/$1/token/g" > users/brotherlogic/inventory_page=1
 exit
 
