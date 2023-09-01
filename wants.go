@@ -39,6 +39,11 @@ func (p *prodClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, er
 	}, nil
 }
 
+func (p *prodClient) DeleteWant(ctx context.Context, wantId int64) error {
+	cr := &AddWantResponse{}
+	return p.makeDiscogsRequest("DELETE", fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), wantId), "", cr)
+}
+
 func (p *prodClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
 	cr := &GetWantsResponse{}
 	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/wants?page=%v", p.user.GetUsername(), page), "", cr)

@@ -47,4 +47,5 @@ type Discogs interface {
 
 	GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error)
 	AddWant(ctx context.Context, releaseId int64) (*pb.Want, error)
+	DeleteWant(ctx context.Context, wantId int64) error
 }

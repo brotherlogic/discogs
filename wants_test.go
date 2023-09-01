@@ -32,3 +32,14 @@ func TestAddWant_Success(t *testing.T) {
 		t.Errorf("Bad want return: %v", want)
 	}
 }
+
+func TestDeleteWant_Success(t *testing.T) {
+	td := GetTestDiscogs()
+
+	err := td.DeleteWant(context.Background(), 12778444)
+
+	if err != nil {
+		t.Fatalf("Bad list sales: %v", err)
+	}
+
+}
