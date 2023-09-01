@@ -158,7 +158,7 @@ func TestCreateFolder(t *testing.T) {
 		t.Fatalf("Error creating folder: %v", err)
 	}
 
-	if folder.GetName() != "TestFolder" || folder.Id != 123 {
+	if folder.GetName() != "TestFolder" || folder.Id != 6259627 {
 		t.Errorf("Bad folder create: %v", folder)
 	}
 }

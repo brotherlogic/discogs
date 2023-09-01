@@ -1,3 +1,7 @@
+mkdir -p testdata/users/brotherlogic/collection/
+curl -X POST -H "Content-Type:application/json" -d '{"name":"TestFolder"}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders_410402dd300326d636f240064fdc3373
+exit
+
 mkdir -p users/brotherlogic/
 curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/wants?page=1&token=$1"  | sed "s/$1/token/g" > users/brotherlogic/wants_page=1
 exit
