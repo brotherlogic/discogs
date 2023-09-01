@@ -41,3 +41,17 @@ func TestGetSale_Success(t *testing.T) {
 		t.Errorf("Bad sale sate (wrong release id): %v", sale)
 	}
 }
+
+func TestListSales_Success(t *testing.T) {
+	td := GetTestDiscogs()
+
+	sales, pagination, err := td.ListSales(context.Background(), 1)
+
+	if err != nil {
+		t.Fatalf("Bad list sales: %v", err)
+	}
+
+	if len(sales) != 50 {
+		t.Errorf("Bad sale return %v -> %v", sales, pagination)
+	}
+}

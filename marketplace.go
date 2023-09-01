@@ -28,6 +28,11 @@ type Release struct {
 	Id int64
 }
 
+type InventoryResponse struct {
+	Pagination Pagination
+	Listings   []GetSaleResponse
+}
+
 func convertStatus(status string) pb.SaleStatus {
 	switch status {
 	case "For Sale":
@@ -36,6 +41,24 @@ func convertStatus(status string) pb.SaleStatus {
 
 	log.Fatalf("Unknown Sale State: %v", status)
 	return pb.SaleStatus_UNKNOWN
+}
+
+func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
+	cr := &InventoryResponse{}
+	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/inventory?page=%v", p.user.GetUsername(), page), "", cr)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var listings []*pb.SaleItem
+	for _, listing := range cr.Listings {
+		listings = append(listings, &pb.SaleItem{
+			ReleaseId: listing.Release.Id,
+			Status:    convertStatus(listing.Status),
+		})
+	}
+
+	return listings, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil
 }
 
 func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
