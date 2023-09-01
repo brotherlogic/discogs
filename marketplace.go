@@ -37,6 +37,10 @@ func convertStatus(status string) pb.SaleStatus {
 	switch status {
 	case "For Sale":
 		return pb.SaleStatus_FOR_SALE
+	case "Violation":
+		return pb.SaleStatus_VIOLATION
+	case "Sold":
+		return pb.SaleStatus_SOLD
 	}
 
 	log.Fatalf("Unknown Sale State: %v", status)
