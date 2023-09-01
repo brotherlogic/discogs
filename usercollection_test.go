@@ -141,3 +141,12 @@ func TestGetCollectionPageOutOfBounds(t *testing.T) {
 		t.Fatalf("Did not return out of of range: %v -> %v,%v", err, coll, pag)
 	}
 }
+
+func TestSetFolder(t *testing.T) {
+	td := GetTestDiscogs()
+
+	err := td.SetFolder(context.Background(), 1427071368, 27915987, 242017)
+	if err != nil {
+		t.Errorf("Error setting folder: %v", err)
+	}
+}

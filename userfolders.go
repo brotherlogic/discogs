@@ -11,9 +11,20 @@ type GetFolderResponse struct {
 	Folders []Folder
 }
 
+type SetFolderResponse struct{}
+
 type Folder struct {
 	Id   int
 	Name string
+}
+
+func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId int64) error {
+	err := p.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v/instances/%v",
+		p.user.GetUsername(), folderId, releaseId, instanceId), "", &SetFolderResponse{})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *prodClient) GetUserFolders(ctx context.Context) ([]*pb.Folder, error) {
