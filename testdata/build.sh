@@ -1,3 +1,7 @@
+mkdir -p testdata/users/brotherlogic/wants/
+curl -X PUT -H "Content-Type:application/json" -d ''  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/wants/12778444?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/wants/12778444
+exit
+
 mkdir -p users/brotherlogic/
 curl  -X DELETE --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/6259627?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders/6259627
 exit
