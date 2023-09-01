@@ -23,7 +23,7 @@ type GetWantsResponse struct {
 
 type AddWantResponse struct {
 	Id               int
-	BasicInformation BasicInformation
+	BasicInformation BasicInformation `json:"basic_information"`
 }
 
 func (p *prodClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
