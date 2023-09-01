@@ -36,6 +36,7 @@ type Discogs interface {
 	SetField(ctx context.Context, r *pb.Release, fnum int, value string) error
 
 	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
+	CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error)
 
 	CreateSale(ctx context.Context, params SaleParams) (int64, error)
 	GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error)
