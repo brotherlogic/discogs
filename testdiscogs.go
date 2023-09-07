@@ -22,7 +22,9 @@ func (t *TestDiscogsClient) CreateSale(ctx context.Context, params SaleParams) (
 }
 
 func (t *TestDiscogsClient) CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error) {
-	return &pb.Folder{}, nil
+	folder := &pb.Folder{Name: folderName, Id: 123}
+	t.Folders = append(t.Folders, folder)
+	return folder, nil
 }
 
 func (t *TestDiscogsClient) DeleteFolder(ctx context.Context, folderId int32) error {
