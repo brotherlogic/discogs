@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"context"
+	"log"
 
 	pb "github.com/brotherlogic/discogs/proto"
 )
@@ -24,6 +25,7 @@ func (t *TestDiscogsClient) CreateSale(ctx context.Context, params SaleParams) (
 func (t *TestDiscogsClient) CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error) {
 	folder := &pb.Folder{Name: folderName, Id: 123}
 	t.Folders = append(t.Folders, folder)
+	log.Printf("Added folder: %v", t.Folders)
 	return folder, nil
 }
 
@@ -64,6 +66,7 @@ func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 }
 
 func (t *TestDiscogsClient) GetUserFolders(_ context.Context) ([]*pb.Folder, error) {
+	log.Printf("Getting folders: %v", t.Folders)
 	return t.Folders, nil
 }
 
