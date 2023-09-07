@@ -31,6 +31,10 @@ func (t *TestDiscogsClient) DeleteFolder(ctx context.Context, folderId int32) er
 	return nil
 }
 
+func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, error) {
+	return &pb.Order{}, nil
+}
+
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
 	return &pb.Want{}, nil
 }

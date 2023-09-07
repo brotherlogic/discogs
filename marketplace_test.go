@@ -55,3 +55,17 @@ func TestListSales_Success(t *testing.T) {
 		t.Errorf("Bad sale return %v -> %v", sales, pagination)
 	}
 }
+
+func TestGetOrder_Success(t *testing.T) {
+	td := GetTestDiscogs()
+
+	order, err := td.GetOrder(context.Background(), "150295-1254")
+
+	if err != nil {
+		t.Fatalf("Bad list sales: %v", err)
+	}
+
+	if order.Status != "Shipped" {
+		t.Errorf("Bad error returned: %v", order)
+	}
+}
