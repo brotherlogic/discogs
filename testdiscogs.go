@@ -12,6 +12,7 @@ type TestDiscogsClient struct {
 	UserId            int32
 	Fields            []*pb.Field
 	Folders           []*pb.Folder
+	Sales             []*pb.SaleItem
 }
 
 func (t *TestDiscogsClient) GetUserId() int32 {
