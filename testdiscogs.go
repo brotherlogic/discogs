@@ -47,6 +47,11 @@ func (t *TestDiscogsClient) DeleteWant(ctx context.Context, wantId int64) error 
 }
 
 func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
+	for _, sale := range t.Sales {
+		if sale.GetSaleId() == saleId {
+			return sale, nil
+		}
+	}
 	return &pb.SaleItem{}, nil
 }
 
@@ -55,7 +60,7 @@ func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Wan
 }
 
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
-	return []*pb.SaleItem{}, &pb.Pagination{}, nil
+	return t.Sales, &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
