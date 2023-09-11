@@ -56,6 +56,7 @@ enum SaleStatus {
     SOLD = 2;
     VIOLATION = 3;
     DRAFT = 4;
+    EXPIRED = 5;
 }
 
 message Price {
