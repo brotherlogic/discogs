@@ -54,6 +54,14 @@ func TestListSales_Success(t *testing.T) {
 	if len(sales) != 50 {
 		t.Errorf("Bad sale return %v -> %v", sales, pagination)
 	}
+
+	for _, sale := range sales {
+		if sale.GetReleaseId() == 9624074 {
+			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 {
+				t.Errorf("No sale id returned: %v", sale)
+			}
+		}
+	}
 }
 
 func TestGetOrder_Success(t *testing.T) {
