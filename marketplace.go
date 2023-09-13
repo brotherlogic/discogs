@@ -149,3 +149,24 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 
 	return csr.ListingId, nil
 }
+
+func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, newPrice int32) error {
+	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
+
+	data := &SaleJson{
+		Price: float32(newPrice) / 100,
+	}
+	v, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	csr := &CreateSaleResponse{}
+	log.Printf("%v", string(v))
+	err = p.makeDiscogsRequest("POST", csURL, string(v), csr)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
