@@ -77,3 +77,13 @@ func TestGetOrder_Success(t *testing.T) {
 		t.Errorf("Bad error returned: %v", order)
 	}
 }
+
+func TestUpdateSale_Success(t *testing.T) {
+	td := GetTestDiscogs()
+
+	err := td.UpdateSale(context.Background(), 2708115424, 5655)
+
+	if err != nil {
+		t.Fatalf("Bad list sales: %v", err)
+	}
+}
