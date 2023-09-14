@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 
@@ -94,6 +95,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	}
 
 	requests.With(prometheus.Labels{"type": rtype}).Inc()
+	log.Printf("DISCOGS_REQUEST %v:%v", rtype, path)
 
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
