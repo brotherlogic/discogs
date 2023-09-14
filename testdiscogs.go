@@ -15,6 +15,10 @@ type TestDiscogsClient struct {
 	Sales             []*pb.SaleItem
 }
 
+func (t *TestDiscogsClient) Throttle() {
+
+}
+
 func (t *TestDiscogsClient) GetUserId() int32 {
 	return t.UserId
 }
