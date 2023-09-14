@@ -11,6 +11,8 @@ import (
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -79,10 +81,20 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 	}
 }
 
+var (
+	requests = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "discogs_requests",
+		Help: "The number of requests made out to discogs",
+	}, []string{"type"})
+)
+
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
+
+	requests.With(prometheus.Labels{"type": rtype}).Inc()
+
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 
