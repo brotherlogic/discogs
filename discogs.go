@@ -8,11 +8,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	THROTTLE_REQUESTS = 60
+	THROTTLE_WINDOW   = time.Minute
 )
 
 type prodClient struct {
@@ -22,6 +28,23 @@ type prodClient struct {
 
 	getter clientGetter
 	user   *pb.User
+
+	requestTimes []time.Time
+}
+
+func (d *prodClient) Throttle() {
+	// Clean the request Times
+	var nrt []time.Time
+	for _, rt := range d.requestTimes {
+		if time.Since(rt) < time.Minute {
+			nrt = append(nrt, rt)
+		}
+	}
+	d.requestTimes = nrt
+
+	if len(d.requestTimes) > THROTTLE_REQUESTS {
+		time.Sleep(time.Minute - time.Since(d.requestTimes[0]))
+	}
 }
 
 func (d *prodClient) GetUserId() int32 {
@@ -86,6 +109,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 
+	d.requestTimes = append(d.requestTimes, time.Now())
 	if rtype == "POST" {
 		resp, err := httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
 		if err != nil {
@@ -110,6 +134,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		}
 		return nil
 	}
+
 	resp, err := httpClient.Get(fullPath)
 	if err != nil {
 		return err
