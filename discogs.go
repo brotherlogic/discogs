@@ -51,6 +51,7 @@ func (o *oauthGetter) config() oauth1.Config {
 type myClient interface {
 	Get(url string) (resp *http.Response, err error)
 	Post(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func DiscogsWithAuth(key, secret, callback string) Discogs {
@@ -93,6 +94,14 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		resp, err = httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
 	case "GET":
 		resp, err = httpClient.Get(fullPath)
+	case "PUT":
+		req, _ := http.NewRequest("PUT", fullPath, bytes.NewBuffer([]byte(data)))
+		req.Header.Set("Content-Type", "application/json")
+		resp, err = httpClient.Do(req)
+	case "DELETE":
+		req, _ := http.NewRequest("DELETE", fullPath, bytes.NewBuffer([]byte("")))
+		req.Header.Set("Content-Type", "application/json")
+		resp, err = httpClient.Do(req)
 	default:
 		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
