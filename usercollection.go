@@ -28,6 +28,7 @@ type CollectionRelease struct {
 	InstanceId       int `json:"instance_id"`
 	FolderId         int `json:"folder_id"`
 	Rating           int
+	Title            string
 	BasicInformation BasicInformation `json:"basic_information"`
 }
 
@@ -103,6 +104,7 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 			Id:         int64(release.Id),
 			FolderId:   int32(release.FolderId),
 			Rating:     int32(release.Rating),
+			Title:      release.BasicInformation.Title,
 		}
 
 		var formats []*pb.Format

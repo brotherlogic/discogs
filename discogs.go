@@ -6,13 +6,22 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	THROTTLE_REQUESTS = 60
+	THROTTLE_WINDOW   = time.Minute
 )
 
 type prodClient struct {
@@ -22,6 +31,23 @@ type prodClient struct {
 
 	getter clientGetter
 	user   *pb.User
+
+	requestTimes []time.Time
+}
+
+func (d *prodClient) Throttle() {
+	// Clean the request Times
+	var nrt []time.Time
+	for _, rt := range d.requestTimes {
+		if time.Since(rt) < time.Minute {
+			nrt = append(nrt, rt)
+		}
+	}
+	d.requestTimes = nrt
+
+	if len(d.requestTimes) > THROTTLE_REQUESTS {
+		time.Sleep(time.Minute - time.Since(d.requestTimes[0]))
+	}
 }
 
 func (d *prodClient) GetUserId() int32 {
@@ -80,10 +106,21 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 	}
 }
 
+var (
+	requests = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "discogs_requests",
+		Help: "The number of requests made out to discogs",
+	}, []string{"type"})
+)
+
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
+
+	requests.With(prometheus.Labels{"type": rtype}).Inc()
+	log.Printf("DISCOGS_REQUEST %v:%v", rtype, path)
+
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 	var resp *http.Response

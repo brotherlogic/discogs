@@ -120,6 +120,10 @@ func TestGetCollection(t *testing.T) {
 				t.Errorf("Bad rating: %v", release)
 			}
 
+			if release.GetTitle() != "Bwyd Time" {
+				t.Errorf("Title has not been returned")
+			}
+
 			foundVinyl := false
 			for _, format := range release.GetFormats() {
 				if format.GetName() == "Vinyl" && format.Quantity == 1 {

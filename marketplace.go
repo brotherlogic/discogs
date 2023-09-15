@@ -19,9 +19,16 @@ type SaleJson struct {
 	Price     float32 `json:"price"`
 }
 
+type Price struct {
+	Value    float32
+	Currency string
+}
+
 type GetSaleResponse struct {
 	Status  string
+	Id      int64
 	Release Release
+	Price   Price
 }
 
 type Release struct {
@@ -41,10 +48,21 @@ func convertStatus(status string) pb.SaleStatus {
 		return pb.SaleStatus_VIOLATION
 	case "Sold":
 		return pb.SaleStatus_SOLD
+	case "Draft":
+		return pb.SaleStatus_DRAFT
+	case "Expired":
+		return pb.SaleStatus_EXPIRED
 	}
 
 	log.Fatalf("Unknown Sale State: %v", status)
 	return pb.SaleStatus_UNKNOWN
+}
+
+func convertPrice(price Price) *pb.Price {
+	return &pb.Price{
+		Value:    int32(price.Value * 100),
+		Currency: price.Currency,
+	}
 }
 
 func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
@@ -59,15 +77,12 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 		listings = append(listings, &pb.SaleItem{
 			ReleaseId: listing.Release.Id,
 			Status:    convertStatus(listing.Status),
+			SaleId:    listing.Id,
+			Price:     convertPrice(listing.Price),
 		})
 	}
 
 	return listings, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil
-}
-
-type Price struct {
-	Currency string
-	Value    float32
 }
 
 type OrderItem struct {
@@ -133,4 +148,25 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 	}
 
 	return csr.ListingId, nil
+}
+
+func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, newPrice int32) error {
+	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
+
+	data := &SaleJson{
+		Price: float32(newPrice) / 100,
+	}
+	v, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	csr := &CreateSaleResponse{}
+	log.Printf("%v", string(v))
+	err = p.makeDiscogsRequest("POST", csURL, string(v), csr)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

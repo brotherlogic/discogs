@@ -41,6 +41,7 @@ type Discogs interface {
 
 	CreateSale(ctx context.Context, params SaleParams) (int64, error)
 	GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error)
+	UpdateSale(ctx context.Context, saleId int64, newPrice int32) error
 	ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error)
 	GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
 
@@ -49,4 +50,6 @@ type Discogs interface {
 	GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error)
 	AddWant(ctx context.Context, releaseId int64) (*pb.Want, error)
 	DeleteWant(ctx context.Context, wantId int64) error
+
+	Throttle()
 }

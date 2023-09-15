@@ -1,8 +1,13 @@
+mkdir -p marketplace/listings
+curl -X POST -H "Content-Type:application/json" -d '{"price": 56.55}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings/2708115424?token=$1" | sed "s/$1/token/g" > marketplace/listings/2708115424_e60172f19b38815d5373bdcbd55eb24f
+exit
+
+
 mkdir -p marketplace/orders
 curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/orders/150295-1254?token=$1"  | sed "s/$1/token/g" > marketplace/orders/150295-1254
 exit
 
-mkdir -p testdata/users/brotherlogic/wants/
+mkdir -p users/brotherlogic/wants/
 curl -X PUT -H "Content-Type:application/json" -d ''  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/wants/12778444?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/wants/12778444
 exit
 
@@ -11,7 +16,7 @@ curl  -X DELETE --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/
 exit
 
 
-mkdir -p testdata/users/brotherlogic/collection/
+mkdir -p users/brotherlogic/collection/
 curl -X POST -H "Content-Type:application/json" -d '{"name":"TestFolder"}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders_410402dd300326d636f240064fdc3373
 exit
 

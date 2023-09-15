@@ -38,7 +38,8 @@ message Release {
     int64 instance_id = 2;
     int32 folder_id = 3;
     int32 rating = 4;
-
+    string title = 7;
+    
     repeated Format formats = 5;
     repeated Label labels = 6;
 }
@@ -54,6 +55,8 @@ enum SaleStatus {
     FOR_SALE = 1;
     SOLD = 2;
     VIOLATION = 3;
+    DRAFT = 4;
+    EXPIRED = 5;
 }
 
 message Price {
