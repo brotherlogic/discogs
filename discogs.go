@@ -147,18 +147,23 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return err
 	}
 
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
 	// Throttling
 	if resp.StatusCode == 429 {
 		return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 	}
 
-	if resp.StatusCode != 200 {
-		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+	// Permission denied
+	if resp.StatusCode == 403 {
+		return status.Errorf(codes.PermissionDenied, string(body))
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode != 200 {
+		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
 	}
 
 	log.Printf("RESULT: %v, CODE %v", string(body), resp.StatusCode)
