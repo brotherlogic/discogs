@@ -26,6 +26,7 @@ func (d *prodClient) GetFields(ctx context.Context) ([]*pb.Field, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Resp %v,%v", err, cr)
 
 	var fields []*pb.Field
 	for _, field := range cr.Fields {
