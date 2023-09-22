@@ -95,6 +95,7 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 }
 
 func (p *prodClient) ForUser(user *pb.User) Discogs {
+	log.Printf("For user with %v and %v and %+v", user.GetUserToken(), user.GetUserSecret(), p.getter.config())
 	return &prodClient{
 		key:      p.key,
 		secret:   p.secret,
@@ -147,18 +148,23 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return err
 	}
 
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
 	// Throttling
 	if resp.StatusCode == 429 {
 		return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 	}
 
-	if resp.StatusCode != 200 {
-		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+	// Permission denied
+	if resp.StatusCode == 403 {
+		return status.Errorf(codes.PermissionDenied, string(body))
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode != 200 {
+		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
 	}
 
 	log.Printf("RESULT: %v, CODE %v", string(body), resp.StatusCode)
