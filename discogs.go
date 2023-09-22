@@ -95,6 +95,7 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 }
 
 func (p *prodClient) ForUser(user *pb.User) Discogs {
+	log.Printf("For user with %v and %v and %+v", user.GetUserToken(), user.GetUserSecret(), p.getter.config())
 	return &prodClient{
 		key:      p.key,
 		secret:   p.secret,
