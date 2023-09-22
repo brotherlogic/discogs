@@ -71,6 +71,7 @@ func (t *tClient) Get(url string) (*http.Response, error) {
 		return nil, err
 	}
 	response.Body = blah
+	response.StatusCode = 200
 
 	return response, nil
 }

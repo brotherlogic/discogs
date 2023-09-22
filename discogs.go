@@ -152,6 +152,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 	}
 
+	if resp.StatusCode != 200 {
+		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
