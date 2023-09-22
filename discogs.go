@@ -67,6 +67,7 @@ type oauthGetter struct {
 
 func (o *oauthGetter) get() myClient {
 	oauthToken := oauth1.NewToken(o.key, o.secret)
+	log.Printf("GOT TOKEN %+v", oauthToken)
 	return o.conf.Client(oauth1.NoContext, oauthToken)
 }
 
