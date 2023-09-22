@@ -119,9 +119,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	}
 
 	requests.With(prometheus.Labels{"type": rtype}).Inc()
-	log.Printf("DISCOGS_REQUEST %v:%v", rtype, path)
 
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
+	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
+
 	httpClient := d.getter.get()
 	var resp *http.Response
 	var err error
