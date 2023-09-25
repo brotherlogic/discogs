@@ -11,6 +11,8 @@ import (
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -79,7 +81,13 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 	}
 }
 
-func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
+var (
+	requestCounter = promauto.NewCounterVec(prometheus.GaugeOpts{
+		name: "discogs_requests",
+	}, []string{"request_type", "endpoint", "response", "response_code"})
+)
+
+func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
@@ -89,11 +97,13 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	if rtype == "POST" {
 		resp, err := httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
 		if err != nil {
+			requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: "-1"})
 			return err
 		}
 
 		// Throttling
 		if resp.StatusCode == 429 {
+			requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: resp.StatusCode})
 			return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 		}
 
