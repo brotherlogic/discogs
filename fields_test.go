@@ -28,6 +28,27 @@ func TestGetFields(t *testing.T) {
 	}
 }
 
+func TestGetFields_WithPersonalToken(t *testing.T) {
+	td := GetTestDiscogsWithPersonalToken()
+
+	fields, err := td.GetFields(context.Background())
+
+	if err != nil {
+		t.Fatalf("unable to retrieve collection: %v,%v", fields, err)
+	}
+
+	var f *pb.Field
+	for _, field := range fields {
+		if field.GetName() == "Cleaned" {
+			f = field
+		}
+	}
+
+	if f == nil || f.Id != 5 {
+		t.Errorf("Bad field pull: %v -> %v", f, fields)
+	}
+}
+
 func TestSetFields(t *testing.T) {
 	td := GetTestDiscogs()
 

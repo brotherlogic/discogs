@@ -58,7 +58,7 @@ type DeleteFolderResponse struct{}
 
 func (d *prodClient) DeleteFolder(ctx context.Context, folderId int32) error {
 	return d.makeDiscogsRequest("DELETE", fmt.Sprintf("/users/%v/collection/folders/%v",
-		d.user.GetUsername(), folderId), "", &DeleteFolderResponse{})
+		d.user.GetUsername(), folderId), "", "/users/uname/collection/folders/fnum", &DeleteFolderResponse{})
 
 }
 
@@ -73,7 +73,7 @@ func (d *prodClient) CreateFolder(ctx context.Context, folderName string) (*pb.F
 
 	cfr := &CreateFolderResponse{}
 	err = d.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders",
-		d.user.GetUsername()), string(v), cfr)
+		d.user.GetUsername()), string(v), "/users/uname/collection/folders", cfr)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (d *prodClient) CreateFolder(ctx context.Context, folderName string) (*pb.F
 
 func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	cr := &CollectionResponse{}
-	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", d.user.GetUsername(), page), "", cr)
+	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", d.user.GetUsername(), page), "", "/users/uname/collection/folders/0/releases", cr)
 	if err != nil {
 		return nil, nil, err
 	}

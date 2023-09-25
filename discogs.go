@@ -22,8 +22,9 @@ type prodClient struct {
 	key      string
 	callback string
 
-	getter clientGetter
-	user   *pb.User
+	getter        clientGetter
+	user          *pb.User
+	personalToken string
 }
 
 func (d *prodClient) GetUserId() int32 {
@@ -77,7 +78,7 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 		getter: &oauthGetter{key: user.GetUserToken(), secret: user.GetUserSecret(),
 			conf: p.getter.config(),
 		},
-		user: user,
+		personalToken: user.GetPersonalToken(),
 	}
 }
 
@@ -94,6 +95,16 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	httpClient := d.getter.get()
 
+	//Setup for personal token if we have it listed
+	if d.personalToken != "" {
+		httpClient = http.DefaultClient
+		if strings.Contains(fullPath, "?") {
+			fullPath = fmt.Sprintf("%v&token=%v", fullPath, d.personalToken)
+		} else {
+			fullPath = fmt.Sprintf("%v?token=%v", fullPath, d.personalToken)
+		}
+	}
+
 	if rtype == "POST" {
 		resp, err := httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
 		if err != nil {
@@ -106,6 +117,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: resp.StatusCode})
 			return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 		}
+		requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: resp.StatusCode})
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
