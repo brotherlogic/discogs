@@ -15,6 +15,10 @@ type TestDiscogsClient struct {
 	Sales             []*pb.SaleItem
 }
 
+func (t *TestDiscogsClient) Throttle() {
+
+}
+
 func (t *TestDiscogsClient) GetUserId() int32 {
 	return t.UserId
 }
@@ -53,6 +57,15 @@ func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.Sale
 		}
 	}
 	return &pb.SaleItem{}, nil
+}
+
+func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, newPrice int32) error {
+	for _, sale := range t.Sales {
+		if sale.GetSaleId() == saleId {
+			sale.Price.Value = newPrice
+		}
+	}
+	return nil
 }
 
 func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {

@@ -54,6 +54,14 @@ func TestListSales_Success(t *testing.T) {
 	if len(sales) != 50 {
 		t.Errorf("Bad sale return %v -> %v", sales, pagination)
 	}
+
+	for _, sale := range sales {
+		if sale.GetReleaseId() == 9624074 {
+			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 {
+				t.Errorf("No sale id returned: %v", sale)
+			}
+		}
+	}
 }
 
 func TestGetOrder_Success(t *testing.T) {
@@ -67,5 +75,15 @@ func TestGetOrder_Success(t *testing.T) {
 
 	if order.Status != "Shipped" {
 		t.Errorf("Bad error returned: %v", order)
+	}
+}
+
+func TestUpdateSale_Success(t *testing.T) {
+	td := GetTestDiscogs()
+
+	err := td.UpdateSale(context.Background(), 2708115424, 5655)
+
+	if err != nil {
+		t.Fatalf("Bad list sales: %v", err)
 	}
 }

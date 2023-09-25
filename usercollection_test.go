@@ -4,7 +4,10 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -43,6 +46,19 @@ func (tg *testGetter) config() oauth1.Config {
 
 type tClient struct{}
 
+func (t *tClient) Do(req *http.Request) (*http.Response, error) {
+	log.Printf("HERE: %+v", req)
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Method == "DELETE" {
+		return t.Get(fmt.Sprintf("%v", req.URL))
+	}
+	return t.Get(fmt.Sprintf("%v_%v", req.URL, hash(string(body))))
+}
+
 func (t *tClient) Get(url string) (*http.Response, error) {
 	response := &http.Response{}
 	testFile := strings.Replace(strings.Replace(url[23:], "?", "_", -1), "&", "_", -1)
@@ -63,6 +79,7 @@ func (t *tClient) Get(url string) (*http.Response, error) {
 		return nil, err
 	}
 	response.Body = blah
+	response.StatusCode = 200
 
 	return response, nil
 }
@@ -110,6 +127,10 @@ func TestGetCollection(t *testing.T) {
 			}
 			if release.GetRating() != 0 {
 				t.Errorf("Bad rating: %v", release)
+			}
+
+			if release.GetTitle() != "Bwyd Time" {
+				t.Errorf("Title has not been returned")
 			}
 
 			foundVinyl := false

@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"github.com/dghubble/oauth1"
@@ -15,6 +17,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	THROTTLE_REQUESTS = 60
+	THROTTLE_WINDOW   = time.Minute
 )
 
 type prodClient struct {
@@ -25,6 +32,23 @@ type prodClient struct {
 	getter        clientGetter
 	user          *pb.User
 	personalToken string
+
+	requestTimes []time.Time
+}
+
+func (d *prodClient) Throttle() {
+	// Clean the request Times
+	var nrt []time.Time
+	for _, rt := range d.requestTimes {
+		if time.Since(rt) < time.Minute {
+			nrt = append(nrt, rt)
+		}
+	}
+	d.requestTimes = nrt
+
+	if len(d.requestTimes) > THROTTLE_REQUESTS {
+		time.Sleep(time.Minute - time.Since(d.requestTimes[0]))
+	}
 }
 
 func (d *prodClient) GetUserId() int32 {
@@ -44,6 +68,7 @@ type oauthGetter struct {
 
 func (o *oauthGetter) get() myClient {
 	oauthToken := oauth1.NewToken(o.key, o.secret)
+	log.Printf("GOT TOKEN %+v", oauthToken)
 	return o.conf.Client(oauth1.NoContext, oauthToken)
 }
 
@@ -54,6 +79,7 @@ func (o *oauthGetter) config() oauth1.Config {
 type myClient interface {
 	Get(url string) (resp *http.Response, err error)
 	Post(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	Do(req *http.Request) (*http.Response, error)
 }
 
 func DiscogsWithAuth(key, secret, callback string) Discogs {
@@ -71,6 +97,7 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 }
 
 func (p *prodClient) ForUser(user *pb.User) Discogs {
+	log.Printf("For user with %v and %v and %+v", user.GetUserToken(), user.GetUserSecret(), p.getter.config())
 	return &prodClient{
 		key:      p.key,
 		secret:   p.secret,
@@ -83,8 +110,8 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 }
 
 var (
-	requestCounter = promauto.NewCounterVec(prometheus.GaugeOpts{
-		name: "discogs_requests",
+	requestCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "discogs_requests",
 	}, []string{"request_type", "endpoint", "response", "response_code"})
 )
 
@@ -92,10 +119,15 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
-	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
-	httpClient := d.getter.get()
 
-	//Setup for personal token if we have it listed
+	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
+	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
+
+	httpClient := d.getter.get()
+	var resp *http.Response
+	var err error
+
+	// Setup for personal token if we have it listed
 	if d.personalToken != "" {
 		httpClient = http.DefaultClient
 		if strings.Contains(fullPath, "?") {
@@ -105,40 +137,31 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		}
 	}
 
-	if rtype == "POST" {
-		resp, err := httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
-		if err != nil {
-			requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: "-1"})
-			return err
-		}
-
-		// Throttling
-		if resp.StatusCode == 429 {
-			requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: resp.StatusCode})
-			return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
-		}
-		requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, response: status.Code(err), response_code: resp.StatusCode})
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		if len(body) > 0 {
-			err = json.Unmarshal(body, obj)
-			if err != nil {
-				return fmt.Errorf("Unarshal error (processing %v): %v from %v", err, string(body), data)
-			}
-		}
-		return nil
+	switch rtype {
+	case "POST":
+		resp, err = httpClient.Post(fullPath, "application/json", bytes.NewBuffer([]byte(data)))
+	case "GET":
+		resp, err = httpClient.Get(fullPath)
+	case "PUT":
+		req, _ := http.NewRequest("PUT", fullPath, bytes.NewBuffer([]byte(data)))
+		req.Header.Set("Content-Type", "application/json")
+		resp, err = httpClient.Do(req)
+	case "DELETE":
+		req, _ := http.NewRequest("DELETE", fullPath, bytes.NewBuffer([]byte("")))
+		req.Header.Set("Content-Type", "application/json")
+		resp, err = httpClient.Do(req)
+	default:
+		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
-	resp, err := httpClient.Get(fullPath)
 	if err != nil {
+		requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"})
 		return err
 	}
+	requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)})
 
-	if resp.StatusCode == 404 {
-		return status.Errorf(codes.NotFound, "Unable to locate sale - %v", fullPath)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
 	}
 
 	// Throttling
@@ -146,17 +169,22 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	// Permission denied
+	if resp.StatusCode == 403 {
+		return status.Errorf(codes.PermissionDenied, string(body))
 	}
+
+	if resp.StatusCode != 200 {
+		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+	}
+
+	log.Printf("RESULT: %v, CODE %v", string(body), resp.StatusCode)
 
 	if len(body) > 0 {
 		err = json.Unmarshal(body, obj)
 		if err != nil {
-			return fmt.Errorf("unmarshal error (processing %v): %v", string(body), err)
+			return fmt.Errorf("Unarshal error (processing %v): %v from %v", err, string(body), data)
 		}
 	}
-
 	return nil
 }
