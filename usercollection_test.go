@@ -23,7 +23,7 @@ func GetTestDiscogs() Discogs {
 	}
 }
 
-func GetTestDiscogsWithPersonalToke() Discogs {
+func GetTestDiscogsWithPersonalToken() Discogs {
 	return &prodClient{
 		getter:        &testGetter{},
 		user:          &pb.User{Username: "brotherlogic"},

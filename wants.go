@@ -28,7 +28,13 @@ type AddWantResponse struct {
 
 func (p *prodClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
 	cr := &AddWantResponse{}
-	err := p.makeDiscogsRequest("PUT", fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), releaseId), "", cr)
+	err := p.makeDiscogsRequest(
+		"PUT",
+		fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), releaseId),
+		"",
+		"/users/uname/wants/wid",
+		cr,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -41,12 +47,24 @@ func (p *prodClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, er
 
 func (p *prodClient) DeleteWant(ctx context.Context, wantId int64) error {
 	cr := &AddWantResponse{}
-	return p.makeDiscogsRequest("DELETE", fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), wantId), "", cr)
+	return p.makeDiscogsRequest(
+		"DELETE",
+		fmt.Sprintf("/users/%v/wants/%v", p.user.GetUsername(), wantId),
+		"",
+		"/users/uname/wants/wid",
+		cr,
+	)
 }
 
 func (p *prodClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
 	cr := &GetWantsResponse{}
-	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/wants?page=%v", p.user.GetUsername(), page), "", cr)
+	err := p.makeDiscogsRequest(
+		"GET",
+		fmt.Sprintf("/users/%v/wants?page=%v", p.user.GetUsername(), page),
+		"",
+		"/users/uname/wants",
+		cr,
+	)
 	if err != nil {
 		return nil, nil, err
 	}

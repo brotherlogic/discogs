@@ -49,7 +49,13 @@ func convertStatus(status string) pb.SaleStatus {
 
 func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
 	cr := &InventoryResponse{}
-	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/inventory?page=%v", p.user.GetUsername(), page), "", cr)
+	err := p.makeDiscogsRequest(
+		"GET",
+		fmt.Sprintf("/users/%v/inventory?page=%v", p.user.GetUsername(), page),
+		"",
+		"/users/uname/inventory",
+		cr,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -86,7 +92,14 @@ func (p *prodClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, e
 	gsURL := fmt.Sprintf("/marketplace/orders/%v", orderId)
 
 	gsr := &Order{}
-	err := p.makeDiscogsRequest("GET", gsURL, "", gsr)
+	err := p.makeDiscogsRequest(
+		"GET",
+		gsURL,
+		"",
+		"/marketplace/orders/oid",
+		gsr,
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +114,13 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 	gsURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
 	gsr := &GetSaleResponse{}
-	err := p.makeDiscogsRequest("GET", gsURL, "", gsr)
+	err := p.makeDiscogsRequest(
+		"GET",
+		gsURL,
+		"",
+		"/marketplace/listings/sid",
+		gsr,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +146,12 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 
 	csr := &CreateSaleResponse{}
 	log.Printf("%v", string(v))
-	err = p.makeDiscogsRequest("POST", csURL, string(v), csr)
+	err = p.makeDiscogsRequest(
+		"POST",
+		csURL,
+		string(v),
+		"/marketplace/listings",
+		csr)
 	if err != nil {
 		return -1, err
 	}
