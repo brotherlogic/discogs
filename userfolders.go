@@ -32,8 +32,14 @@ func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folde
 		return err
 	}
 
-	err = p.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v/instances/%v",
-		p.user.GetUsername(), folderId, releaseId, instanceId), string(v), &SetFolderResponse{})
+	err = p.makeDiscogsRequest(
+		"POST",
+		fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v/instances/%v",
+			p.user.GetUsername(), folderId, releaseId, instanceId),
+		string(v),
+		"/users/uname/collection/folders/fid/releases/rid/instances/iid",
+		&SetFolderResponse{},
+	)
 	if err != nil {
 		return err
 	}
@@ -42,7 +48,14 @@ func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folde
 
 func (p *prodClient) GetUserFolders(ctx context.Context) ([]*pb.Folder, error) {
 	gfr := &GetFolderResponse{}
-	err := p.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders", p.user.GetUsername()), "", gfr)
+	err := p.makeDiscogsRequest(
+		"GET",
+		fmt.Sprintf("/users/%v/collection/folders",
+			p.user.GetUsername()),
+		"",
+		"/users/uname/collection/folders",
+		gfr,
+	)
 	if err != nil {
 		return nil, err
 	}

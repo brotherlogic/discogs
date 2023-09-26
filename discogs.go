@@ -29,8 +29,9 @@ type prodClient struct {
 	key      string
 	callback string
 
-	getter clientGetter
-	user   *pb.User
+	getter        clientGetter
+	user          *pb.User
+	personalToken string
 
 	requestTimes []time.Time
 }
@@ -56,6 +57,7 @@ func (d *prodClient) GetUserId() int32 {
 
 type clientGetter interface {
 	get() myClient
+	getDefault() myClient
 	config() oauth1.Config
 }
 
@@ -63,6 +65,10 @@ type oauthGetter struct {
 	key    string
 	secret string
 	conf   oauth1.Config
+}
+
+func (o *oauthGetter) getDefault() myClient {
+	return http.DefaultClient
 }
 
 func (o *oauthGetter) get() myClient {
@@ -104,23 +110,20 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 		getter: &oauthGetter{key: user.GetUserToken(), secret: user.GetUserSecret(),
 			conf: p.getter.config(),
 		},
-		user: user,
+		personalToken: user.GetPersonalToken(),
 	}
 }
 
 var (
-	requests = promauto.NewCounterVec(prometheus.CounterOpts{
+	requestCounter = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "discogs_requests",
-		Help: "The number of requests made out to discogs",
-	}, []string{"type"})
+	}, []string{"request_type", "endpoint", "response", "response_code"})
 )
 
-func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj interface{}) error {
+func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
-
-	requests.With(prometheus.Labels{"type": rtype}).Inc()
 
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
 	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
@@ -128,6 +131,16 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	httpClient := d.getter.get()
 	var resp *http.Response
 	var err error
+
+	// Setup for personal token if we have it listed
+	if d.personalToken != "" {
+		httpClient = d.getter.getDefault()
+		if strings.Contains(fullPath, "?") {
+			fullPath = fmt.Sprintf("%v&token=%v", fullPath, d.personalToken)
+		} else {
+			fullPath = fmt.Sprintf("%v?token=%v", fullPath, d.personalToken)
+		}
+	}
 
 	switch rtype {
 	case "POST":
@@ -146,8 +159,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
 	if err != nil {
+		requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"})
 		return err
 	}
+	requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)})
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -167,8 +182,6 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 	if resp.StatusCode != 200 {
 		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
 	}
-
-	log.Printf("RESULT: %v, CODE %v", string(body), resp.StatusCode)
 
 	if len(body) > 0 {
 		err = json.Unmarshal(body, obj)

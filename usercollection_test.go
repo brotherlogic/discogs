@@ -26,7 +26,19 @@ func GetTestDiscogs() Discogs {
 	}
 }
 
+func GetTestDiscogsWithPersonalToken() Discogs {
+	return &prodClient{
+		getter:        &testGetter{},
+		user:          &pb.User{Username: "brotherlogic"},
+		personalToken: "personal_token",
+	}
+}
+
 type testGetter struct{}
+
+func (tg *testGetter) getDefault() myClient {
+	return &tClient{}
+}
 
 func (tg *testGetter) get() myClient {
 	return &tClient{}
