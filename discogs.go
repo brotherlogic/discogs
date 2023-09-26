@@ -126,7 +126,6 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	}
 
 	fullPath := fmt.Sprintf("https://api.discogs.com%v", path)
-	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
 
 	httpClient := d.getter.get()
 	var resp *http.Response
@@ -141,6 +140,8 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			fullPath = fmt.Sprintf("%v?token=%v", fullPath, d.personalToken)
 		}
 	}
+
+	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
 
 	switch rtype {
 	case "POST":
