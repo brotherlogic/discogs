@@ -106,7 +106,7 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 }
 
 func (t *TestDiscogsClient) GetLoginURL() (string, string, string, error) {
-	return "", "", "", nil
+	return "", "madeuptoken", "madeupsecret", nil
 }
 func (t *TestDiscogsClient) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error) {
 	return "", "", nil
