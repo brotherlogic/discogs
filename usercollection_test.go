@@ -36,6 +36,10 @@ func GetTestDiscogsWithPersonalToken() Discogs {
 
 type testGetter struct{}
 
+func (tg *testGetter) getDefault() myClient {
+	return &tClient{}
+}
+
 func (tg *testGetter) get() myClient {
 	return &tClient{}
 }
