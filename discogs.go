@@ -111,6 +111,7 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 			conf: p.getter.config(),
 		},
 		personalToken: user.GetPersonalToken(),
+		user:          user,
 	}
 }
 
