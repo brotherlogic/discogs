@@ -174,11 +174,13 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 	return csr.ListingId, nil
 }
 
-func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, newPrice int32) error {
+func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error {
 	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
 	data := &SaleJson{
-		Price: float32(newPrice) / 100,
+		Price:     float32(newPrice) / 100,
+		ReleaseId: releaseId,
+		Condition: condition,
 	}
 	v, err := json.Marshal(data)
 	if err != nil {
