@@ -40,6 +40,10 @@ func TestGetSale_Success(t *testing.T) {
 	if sale.GetReleaseId() != 27962688 {
 		t.Errorf("Bad sale sate (wrong release id): %v", sale)
 	}
+
+	if sale.GetCondition() != "Mint (M)" {
+		t.Errorf("Bad sale condition: %v", sale.GetCondition())
+	}
 }
 
 func TestListSales_Success(t *testing.T) {

@@ -70,6 +70,7 @@ message SaleItem {
     SaleStatus status = 2;
     Price price = 3;
     int64 release_id = 4;
+    string condition = 5;
 }
 
 message Artist {
