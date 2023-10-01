@@ -25,10 +25,11 @@ type Price struct {
 }
 
 type GetSaleResponse struct {
-	Status  string
-	Id      int64
-	Release Release
-	Price   Price
+	Status    string
+	Id        int64
+	Release   Release
+	Price     Price
+	Condition string
 }
 
 type Release struct {
@@ -143,6 +144,7 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 	return &pb.SaleItem{
 		Status:    convertStatus(gsr.Status),
 		ReleaseId: (gsr.Release.Id),
+		Condition: gsr.Condition,
 	}, nil
 }
 
