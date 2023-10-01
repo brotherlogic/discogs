@@ -81,7 +81,7 @@ func TestGetOrder_Success(t *testing.T) {
 func TestUpdateSale_Success(t *testing.T) {
 	td := GetTestDiscogs()
 
-	err := td.UpdateSale(context.Background(), 2708115424, 5655)
+	err := td.UpdateSale(context.Background(), 2708115424, 19975519, "Near Mint (NM or M-)", 5655)
 
 	if err != nil {
 		t.Fatalf("Bad list sales: %v", err)
