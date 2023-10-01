@@ -40,6 +40,9 @@ message Release {
     int32 folder_id = 3;
     int32 rating = 4;
     string title = 7;
+
+    string condition = 8;
+    string sleeve_condition = 9;
     
     repeated Format formats = 5;
     repeated Label labels = 6;
