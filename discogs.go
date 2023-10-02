@@ -181,7 +181,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return status.Errorf(codes.PermissionDenied, string(body))
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 200 && resp.StatusCode != 204 {
 		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
 	}
 
