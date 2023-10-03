@@ -29,7 +29,13 @@ type CollectionRelease struct {
 	FolderId         int `json:"folder_id"`
 	Rating           int
 	Title            string
+	Notes            []Note
 	BasicInformation BasicInformation `json:"basic_information"`
+}
+
+type Note struct {
+	FieldId int `json:"field_id"`
+	Value   string
 }
 
 type BasicInformation struct {
@@ -105,6 +111,11 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 			FolderId:   int32(release.FolderId),
 			Rating:     int32(release.Rating),
 			Title:      release.BasicInformation.Title,
+			Notes:      make(map[int32]string),
+		}
+
+		for _, note := range release.Notes {
+			r.Notes[int32(note.FieldId)] = note.Value
 		}
 
 		var formats []*pb.Format

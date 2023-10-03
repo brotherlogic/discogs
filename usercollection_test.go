@@ -138,7 +138,7 @@ func TestGetCollection(t *testing.T) {
 			}
 
 			if release.GetNotes()[4] != "1.6" {
-				t.Errorf("Notes have not been returned")
+				t.Errorf("Notes have not been returned: %v", release.GetNotes())
 			}
 
 			foundVinyl := false
@@ -151,13 +151,13 @@ func TestGetCollection(t *testing.T) {
 				t.Errorf("Unable to find vinyl: %v", release)
 			}
 
-			foundAnkst := false
+			foundLabel := false
 			for _, label := range release.GetLabels() {
-				if label.GetName() == "Ankst" && label.Catno == "ANKST 059" && label.Id == 33378 {
-					foundAnkst = true
+				if label.GetName() == "Amestay" && label.Catno == "1001" && label.Id == 724668 {
+					foundLabel = true
 				}
 			}
-			if !foundAnkst {
+			if !foundLabel {
 				t.Errorf("The label was not found: %v", release)
 			}
 
