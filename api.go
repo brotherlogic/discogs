@@ -33,7 +33,6 @@ type Discogs interface {
 	ForUser(user *pb.User) Discogs
 
 	GetFields(ctx context.Context) ([]*pb.Field, error)
-	GetFieldsOnRecord(ctx context.Context, r *pb.Release) (map[string]string, error)
 	SetField(ctx context.Context, r *pb.Release, fnum int, value string) error
 
 	GetUserFolders(ctx context.Context) ([]*pb.Folder, error)
