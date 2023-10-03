@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"context"
+	"log"
 	"testing"
 
 	pb "github.com/brotherlogic/discogs/proto"
@@ -15,6 +16,8 @@ func TestGetFields(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to retrieve collection: %v,%v", fields, err)
 	}
+
+	log.Printf("PULLED: %v", fields)
 
 	var f *pb.Field
 	for _, field := range fields {

@@ -115,26 +115,30 @@ func TestGetCollection(t *testing.T) {
 		t.Errorf("Bad collection size, expected 50, got %v", len(coll))
 	}
 
-	if pag.GetPages() != 46 {
+	if pag.GetPages() != 48 {
 		t.Errorf("Bad pagination return: %v", pag)
 	}
 
 	found := false
 	for _, release := range coll {
-		if release.GetId() == 570258 {
+		if release.GetId() == 5964926 {
 			found = true
-			if release.GetInstanceId() != 365214833 {
+			if release.GetInstanceId() != 780876394 {
 				t.Errorf("Bad instance id: %v", release)
 			}
-			if release.GetFolderId() != 1727264 {
+			if release.GetFolderId() != 267116 {
 				t.Errorf("Bad folder id: %v", release)
 			}
-			if release.GetRating() != 0 {
+			if release.GetRating() != 5 {
 				t.Errorf("Bad rating: %v", release)
 			}
 
-			if release.GetTitle() != "Bwyd Time" {
+			if release.GetTitle() != "Loveseed" {
 				t.Errorf("Title has not been returned")
+			}
+
+			if release.GetNotes()[4] != "1.6" {
+				t.Errorf("Notes have not been returned: %v", release.GetNotes())
 			}
 
 			foundVinyl := false
@@ -147,13 +151,13 @@ func TestGetCollection(t *testing.T) {
 				t.Errorf("Unable to find vinyl: %v", release)
 			}
 
-			foundAnkst := false
+			foundLabel := false
 			for _, label := range release.GetLabels() {
-				if label.GetName() == "Ankst" && label.Catno == "ANKST 059" && label.Id == 33378 {
-					foundAnkst = true
+				if label.GetName() == "Amestay" && label.Catno == "1001" && label.Id == 724668 {
+					foundLabel = true
 				}
 			}
-			if !foundAnkst {
+			if !foundLabel {
 				t.Errorf("The label was not found: %v", release)
 			}
 
