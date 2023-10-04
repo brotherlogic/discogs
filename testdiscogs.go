@@ -13,10 +13,20 @@ type TestDiscogsClient struct {
 	Fields            []*pb.Field
 	Folders           []*pb.Folder
 	Sales             []*pb.SaleItem
+	Rating            map[int64]int32
+}
+
+func GetTestClient() *TestDiscogsClient {
+	return &TestDiscogsClient{Rating: make(map[int64]int32)}
 }
 
 func (t *TestDiscogsClient) Throttle() {
 
+}
+
+func (t *TestDiscogsClient) SetRating(ctx context.Context, releaseId int64, newScore int32) error {
+	t.Rating[releaseId] = newScore
+	return nil
 }
 
 func (t *TestDiscogsClient) GetUserId() int32 {
@@ -106,14 +116,14 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 }
 
 func (t *TestDiscogsClient) GetLoginURL() (string, string, string, error) {
-	return "", "madeuptoken", "madeupsecret", nil
+	return "", "madeuptoken", "madeupysecret", nil
 }
 func (t *TestDiscogsClient) HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error) {
 	return "", "", nil
 }
 
 func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
-	return &pb.User{Username: "madeupuser"}, nil
+	return nil, nil
 }
 
 func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
