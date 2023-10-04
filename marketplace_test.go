@@ -61,7 +61,7 @@ func TestListSales_Success(t *testing.T) {
 
 	for _, sale := range sales {
 		if sale.GetReleaseId() == 9624074 {
-			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 {
+			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 || sale.GetCondition() != "Very Good Plus (VG+)" {
 				t.Errorf("No sale id returned: %v", sale)
 			}
 		}

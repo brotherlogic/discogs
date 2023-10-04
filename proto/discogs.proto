@@ -46,6 +46,8 @@ message Release {
     
     repeated Format formats = 5;
     repeated Label labels = 6;
+
+    map<int32, string> notes = 10;
 }
 
 message Label {

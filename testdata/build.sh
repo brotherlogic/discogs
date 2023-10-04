@@ -2,6 +2,14 @@ mkdir -p releases/3139057/rating
 curl -X PUT -H "Content-Type:application/json" -d '{"rating": 5}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/3139057/rating/BrotherLogic?token=$1" | sed "s/$1/token/g" > releases/3139057/rating/brotherlogic_36359a9186d72b959187df1ff3afb788
 exit
 
+mkdir -p users/brotherlogic/collection/folders/0/releases/1163112/instances/19867414/fields/
+curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/fields?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/fields
+curl  -X POST -H "Content-Type:applicaion/json" ---user-agent "GoDiscogsTestData" "https://api.discogs.com/users/BrotherLogic/collection/folders/0/releases/1163112/instances/19867414/fields/5?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases/1163112/instances/19867414/fields/5
+mkdir -p users/brotherlogic/collection/folders/0/
+curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/0/releases?token=$1&page=1&per_page=100" |  sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases_page=1
+curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/0/releases?token=$1&page=100&per_page=100" |  sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases_page=100
+exit
+
 mkdir -p marketplace/listings
 curl -X POST -H "Content-Type:application/json" -d '{"price": 56.55}'  --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings/2708115424?token=$1" | sed "s/$1/token/g" > marketplace/listings/2708115424_e60172f19b38815d5373bdcbd55eb24f
 exit
@@ -42,10 +50,3 @@ exit
 mkdir -p users/brotherlogic/collection/
 curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders/FILE
 exit
-
-mkdir -p users/brotherlogic/collection/folders/0/releases/1163112/instances/19867414/fields/
-curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/fields?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/fields
-curl  -X POST -H "Content-Type:applicaion/json" ---user-agent "GoDiscogsTestData" "https://api.discogs.com/users/BrotherLogic/collection/folders/0/releases/1163112/instances/19867414/fields/5?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases/1163112/instances/19867414/fields/5
-mkdir -p users/brotherlogic/collection/folders/0/
-curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/0/releases?token=$1&page=1&per_page=100" |  sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases_page=1
-curl  --user-agent "GoDiscogsTestData" "https://api.discogs.com/users/brotherlogic/collection/folders/0/releases?token=$1&page=100&per_page=100" |  sed "s/$1/token/g" > users/brotherlogic/collection/folders/0/releases_page=100

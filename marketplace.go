@@ -86,6 +86,7 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 			Status:    convertStatus(listing.Status),
 			SaleId:    listing.Id,
 			Price:     convertPrice(listing.Price),
+			Condition: listing.Condition,
 		})
 	}
 
