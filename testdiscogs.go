@@ -123,7 +123,7 @@ func (t *TestDiscogsClient) HandleDiscogsResponse(ctx context.Context, secret, t
 }
 
 func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error) {
-	return nil, nil
+	return &pb.User{Username: "madeupuser"}, nil
 }
 
 func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
