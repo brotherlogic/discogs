@@ -50,6 +50,10 @@ message Release {
     map<int32, string> notes = 10;
 }
 
+message ReleaseStats {
+    int32 median_price = 1;
+}
+
 message Label {
     int32 id = 1;
     string name = 2;

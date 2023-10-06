@@ -46,6 +46,18 @@ func TestGetSale_Success(t *testing.T) {
 	}
 }
 
+func TestGetReleaseStats(t *testing.T) {
+	td := GetTestDiscogs()
+	stats, err := td.GetReleaseStats(context.Background(), 625928)
+	if err != nil {
+		t.Fatalf("bad get: %v", err)
+	}
+
+	if stats.GetMedianPrice() != 1578 {
+		t.Errorf("Wrong median price should have been 1578, was %v", stats.GetMedianPrice())
+	}
+}
+
 func TestListSales_Success(t *testing.T) {
 	td := GetTestDiscogs()
 

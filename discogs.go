@@ -122,6 +122,28 @@ var (
 )
 
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
+	if rtype == "SGET" {
+		httpClient := d.getter.getDefault()
+		resp, err := httpClient.Get(path)
+		if err != nil {
+			return err
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("%v: %v", resp.StatusCode, string(body))
+		}
+
+		log.Printf("READ %v", len(string(body)))
+		nobj := obj.(*strpass)
+		nobj.Value = string(body)
+		return nil
+	}
+
 	if !strings.HasPrefix(path, "/") {
 		return status.Errorf(codes.FailedPrecondition, "Path needs to start with / :'%v'", path)
 	}
