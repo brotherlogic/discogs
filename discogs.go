@@ -129,7 +129,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			return err
 		}
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}
@@ -138,7 +138,9 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			return fmt.Errorf("%v: %v", resp.StatusCode, string(body))
 		}
 
-		obj = string(body)
+		log.Printf("READ %v", len(string(body)))
+		nobj := obj.(*strpass)
+		nobj.Value = string(body)
 		return nil
 	}
 
