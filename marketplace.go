@@ -72,7 +72,7 @@ type strpass struct {
 	Value string
 }
 
-func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int32) (*pb.ReleaseStats, error) {
+func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error) {
 	url := fmt.Sprintf("https://www.discogs.com/release/%v", releaseId)
 	str := &strpass{}
 	err := p.makeDiscogsRequest("SGET", url, "", "release", str)
