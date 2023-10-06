@@ -157,6 +157,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, obj int
 		return err
 	}
 
+	if resp.StatusCode == 403 {
+		return status.Errorf(codes.PermissionDenied, "Authentication is missing: %v", string(body))
+	}
+
 	log.Printf("RESULT: %v, CODE %v", string(body), resp.StatusCode)
 
 	if len(body) > 0 {
