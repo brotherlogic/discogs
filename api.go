@@ -45,7 +45,7 @@ type Discogs interface {
 	ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error)
 	GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
 
-	GetReleaseStats(ctx context.Context, releaseId int32) (*pb.ReleaseStats, error)
+	GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error)
 
 	SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error
 
