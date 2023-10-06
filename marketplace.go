@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"regexp"
+	"strconv"
 
 	pb "github.com/brotherlogic/discogs/proto"
 )
@@ -64,6 +66,27 @@ func convertPrice(price Price) *pb.Price {
 		Value:    int32(price.Value * 100),
 		Currency: price.Currency,
 	}
+}
+
+func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int32) (*pb.ReleaseStats, error) {
+	url := fmt.Sprintf("https://www.discogs.com/release/%v", releaseId)
+	str := ""
+	err := p.makeDiscogsRequest("SGET", url, "", "release", str)
+	if err != nil {
+		return nil, err
+	}
+
+	results := regexp.MustCompile("Median.*?span.*?span>(.*?)<").FindAllStringSubmatch(str, 1)
+	if len(results) > 0 && len(results[0]) > 0 {
+		strvl := results[0][0]
+		num, err := strconv.ParseFloat(strvl[1:], 16)
+		if err != nil {
+			return nil, err
+		}
+		return &pb.ReleaseStats{MedianPrice: int32(num * 100)}, nil
+	}
+
+	return &pb.ReleaseStats{}, nil
 }
 
 func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {

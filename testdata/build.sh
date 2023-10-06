@@ -1,3 +1,7 @@
+mkdir release
+curl https://www.discogs.com/release/625928 > release/625928
+exit
+
 mkdir -p releases/3139057/rating
 curl -X PUT -H "Content-Type:application/json" -d '{"rating": 5}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/3139057/rating/BrotherLogic?token=$1" | sed "s/$1/token/g" > releases/3139057/rating/brotherlogic_36359a9186d72b959187df1ff3afb788
 exit

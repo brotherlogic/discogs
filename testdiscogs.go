@@ -90,6 +90,10 @@ func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId
 	return nil
 }
 
+func (t *TestDiscogsClient) GetReleaseStats(ctx context.Context, releaseId int32) (*pb.ReleaseStats, error) {
+	return &pb.ReleaseStats{}, nil
+}
+
 func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 	return t
 }
