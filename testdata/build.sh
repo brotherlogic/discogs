@@ -1,4 +1,12 @@
 mkdir release
+curl https://www.discogs.com/release/28154152 > release/28154152
+exit
+
+mkdir release
+curl https://www.discogs.com/release/2749755 > release/2749755
+exit
+
+mkdir release
 curl https://www.discogs.com/release/625928 > release/625928
 exit
 
