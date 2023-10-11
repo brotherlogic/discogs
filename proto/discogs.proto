@@ -46,9 +46,11 @@ message Release {
     
     repeated Format formats = 5;
     repeated Label labels = 6;
+    repeated Artist artists = 11;
 
     map<int32, string> notes = 10;
 }
+
 
 message Label {
     int32 id = 1;
@@ -80,6 +82,7 @@ message SaleItem {
 
 message Artist {
     string name = 1;
+    int64 id = 2;
 }
 
 message Want {

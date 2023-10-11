@@ -161,6 +161,16 @@ func TestGetCollection(t *testing.T) {
 				t.Errorf("The label was not found: %v", release)
 			}
 
+			foundArtist := false
+			for _, artist := range release.GetArtists() {
+				if artist.GetName() == "The Loveseed" && artist.GetId() == 3954346 {
+					foundArtist = true
+				}
+			}
+			if !foundArtist {
+				t.Errorf("Artist was not found: %v", release)
+			}
+
 		}
 	}
 
