@@ -68,18 +68,27 @@ func convertPrice(price Price) *pb.Price {
 	}
 }
 
-func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int32) (*pb.ReleaseStats, error) {
+type strpass struct {
+	Value string
+}
+
+func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error) {
 	url := fmt.Sprintf("https://www.discogs.com/release/%v", releaseId)
-	str := ""
+	str := &strpass{}
 	err := p.makeDiscogsRequest("SGET", url, "", "release", str)
 	if err != nil {
 		return nil, err
 	}
 
-	results := regexp.MustCompile("Median.*?span.*?span(.*?)\\<").FindAllStringSubmatch(str, 1)
-	log.Printf("HERE: %v", results)
+	results := regexp.MustCompile("Median.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
 	if len(results) > 0 && len(results[0]) > 0 {
-		strvl := results[0][0]
+		strvl := results[0][1]
+
+		// Release has no median price
+		if strvl == "--" {
+			return &pb.ReleaseStats{MedianPrice: 0}, nil
+		}
+
 		num, err := strconv.ParseFloat(strvl[1:], 16)
 		if err != nil {
 			return nil, err
