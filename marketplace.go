@@ -80,11 +80,12 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 		return nil, err
 	}
 
-	results := regexp.MustCompile("Median.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
+	results := regexp.MustCompile("Median<!.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
 	if len(results) > 0 && len(results[0]) > 0 {
 		strvl := results[0][1]
 
 		// Release has no median price
+		log.Printf("STRVL: %v", strvl)
 		if strvl == "--" {
 			return &pb.ReleaseStats{MedianPrice: 0}, nil
 		}
