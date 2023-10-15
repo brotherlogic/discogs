@@ -76,7 +76,8 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int32) (*pb.
 		return nil, err
 	}
 
-	results := regexp.MustCompile("Median.*?span.*?span>(.*?)<").FindAllStringSubmatch(str, 1)
+	results := regexp.MustCompile("Median.*?span.*?span(.*?)\\<").FindAllStringSubmatch(str, 1)
+	log.Printf("HERE: %v", results)
 	if len(results) > 0 && len(results[0]) > 0 {
 		strvl := results[0][0]
 		num, err := strconv.ParseFloat(strvl[1:], 16)
