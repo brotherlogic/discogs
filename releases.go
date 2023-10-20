@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	pb "github.com/brotherlogic/discogs/proto"
 )
 
 type Rating struct {
@@ -24,4 +26,8 @@ func (p *prodClient) SetRating(ctx context.Context, releaseid int64, rating int3
 
 	resp := &RatingResponse{}
 	return p.makeDiscogsRequest("PUT", url, string(v), "/releases/rid/rating/uname", resp)
+}
+
+func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Release, error) {
+	return &pb.Release{}, nil
 }

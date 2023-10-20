@@ -48,6 +48,8 @@ message Release {
     repeated Label labels = 6;
 
     map<int32, string> notes = 10;
+
+    int64 release_date = 11;
 }
 
 message ReleaseStats {
