@@ -48,7 +48,7 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 	}
 
 	var formats []*pb.Format
-	for _, form := range resp.BasicInformation.Formats {
+	for _, form := range resp.Formats {
 		val, _ := strconv.ParseInt(form.Qty, 10, 32)
 		formats = append(formats, &pb.Format{
 			Name:         form.Name,
@@ -59,7 +59,7 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 	r.Formats = formats
 
 	var labels []*pb.Label
-	for _, label := range resp.BasicInformation.Labels {
+	for _, label := range resp.Labels {
 		labels = append(labels, &pb.Label{
 			Name:  label.Name,
 			Catno: label.Catno,
@@ -67,6 +67,15 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 		})
 	}
 	r.Labels = labels
+
+	var artists []*pb.Artist
+	for _, artist := range resp.Artists {
+		artists = append(artists, &pb.Artist{
+			Name: artist.Name,
+			Id:   int64(artist.Id),
+		})
+	}
+	r.Artists = artists
 
 	rd, err := time.Parse("2006-01-02", resp.Released)
 	if err != nil {

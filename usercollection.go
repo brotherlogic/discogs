@@ -42,6 +42,9 @@ type IndividualRelease struct {
 	Title            string
 	BasicInformation BasicInformation `json:"basic_information"`
 	Released         string
+	Artists          []Artist
+	Labels           []Label
+	Formats          []Format
 }
 
 type Note struct {
@@ -53,6 +56,7 @@ type BasicInformation struct {
 	Formats []Format
 	Labels  []Label
 	Title   string
+	Artists []Artist
 }
 
 type Label struct {
@@ -149,6 +153,15 @@ func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Relea
 			})
 		}
 		r.Labels = labels
+
+		var artists []*pb.Artist
+		for _, artist := range release.BasicInformation.Artists {
+			artists = append(artists, &pb.Artist{
+				Name: artist.Name,
+				Id:   int64(artist.Id),
+			})
+		}
+		r.Artists = artists
 
 		rs = append(rs, r)
 	}

@@ -36,4 +36,25 @@ func TestGetRelease(t *testing.T) {
 	if r.GetReleaseDate() != dVal.Unix() {
 		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), dVal)
 	}
+
+	artistFound := false
+	for _, artist := range r.GetArtists() {
+		if artist.GetName() == "The Fall" && artist.GetId() == 2228 {
+			artistFound = true
+		}
+	}
+	if !artistFound {
+		t.Errorf("Did not find artist: %v", r)
+	}
+
+	labelFound := false
+	for _, label := range r.GetLabels() {
+		if label.GetName() == "Step-Forward Records" && label.GetId() == 14962 {
+			labelFound = true
+		}
+	}
+	if !labelFound {
+		t.Errorf("Did not find label: %v", r)
+	}
+
 }
