@@ -46,11 +46,14 @@ message Release {
     
     repeated Format formats = 5;
     repeated Label labels = 6;
+    repeated Artist artists = 12;
 
     map<int32, string> notes = 10;
 
     int64 release_date = 11;
 }
+
+
 
 message ReleaseStats {
     int32 median_price = 1;
@@ -86,6 +89,7 @@ message SaleItem {
 
 message Artist {
     string name = 1;
+    int64 id = 2;
 }
 
 message Want {

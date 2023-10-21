@@ -9,6 +9,7 @@ import (
 
 type Artist struct {
 	Name string
+	Id   int
 }
 
 type Want struct {
