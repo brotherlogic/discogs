@@ -5,6 +5,8 @@ import (
 	"log"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type TestDiscogsClient struct {
@@ -84,6 +86,16 @@ func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Wan
 
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
 	return t.Sales, &pb.Pagination{}, nil
+}
+
+func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Release, error) {
+	for _, r := range t.collectionRecords {
+		if r.GetId() == releaseId {
+			return r, nil
+		}
+	}
+
+	return nil, status.Errorf(codes.NotFound, "Unable to locate %v", releaseId)
 }
 
 func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {

@@ -31,6 +31,17 @@ type CollectionRelease struct {
 	Title            string
 	Notes            []Note
 	BasicInformation BasicInformation `json:"basic_information"`
+	Released         string
+}
+
+type IndividualRelease struct {
+	Id               int
+	InstanceId       int `json:"instance_id"`
+	FolderId         int `json:"folder_id"`
+	Rating           int
+	Title            string
+	BasicInformation BasicInformation `json:"basic_information"`
+	Released         string
 }
 
 type Note struct {
