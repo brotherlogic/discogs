@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
@@ -77,11 +78,34 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 	}
 	r.Artists = artists
 
-	rd, err := time.Parse("2006-01-02", resp.Released)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse %v -> %v", resp.Released, err)
+	switch strings.Count(resp.Released, "-") {
+	case 2:
+		if strings.HasSuffix(resp.Released, "-00") {
+			rd, err := time.Parse("2006-01-00", resp.Released)
+			if err != nil {
+				return nil, fmt.Errorf("2 unable to parse %v -> %v", resp.Released, err)
+			}
+			r.ReleaseDate = rd.Unix()
+		} else {
+			rd, err := time.Parse("2006-01-02", resp.Released)
+			if err != nil {
+				return nil, fmt.Errorf("2 unable to parse %v -> %v", resp.Released, err)
+			}
+			r.ReleaseDate = rd.Unix()
+		}
+	case 1:
+		rd, err := time.Parse("2006-01", resp.Released)
+		if err != nil {
+			return nil, fmt.Errorf("1 unable to parse %v -> %v", resp.Released, err)
+		}
+		r.ReleaseDate = rd.Unix()
+	case 0:
+		rd, err := time.Parse("2006", resp.Released)
+		if err != nil {
+			return nil, fmt.Errorf("0 unable to parse %v -> %v", resp.Released, err)
+		}
+		r.ReleaseDate = rd.Unix()
 	}
-	r.ReleaseDate = rd.Unix()
 
 	return r, nil
 }

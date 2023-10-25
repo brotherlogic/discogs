@@ -56,5 +56,44 @@ func TestGetRelease(t *testing.T) {
 	if !labelFound {
 		t.Errorf("Did not find label: %v", r)
 	}
+}
 
+func TestGetRelease_JustYear(t *testing.T) {
+	d := GetTestDiscogs()
+
+	r, err := d.GetRelease(context.Background(), 1929402)
+
+	if err != nil {
+		t.Fatalf("Failed to get release: %v", err)
+	}
+
+	storedDate := "1994"
+	dVal, err := time.Parse("2006", storedDate)
+	if err != nil {
+		t.Fatalf("Date parsing problem: %v", err)
+	}
+
+	if r.GetReleaseDate() != dVal.Unix() {
+		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), dVal)
+	}
+}
+
+func TestGetRelease_JustYearAndMonth(t *testing.T) {
+	d := GetTestDiscogs()
+
+	r, err := d.GetRelease(context.Background(), 372019)
+
+	if err != nil {
+		t.Fatalf("Failed to get release: %v", err)
+	}
+
+	storedDate := "May 1980"
+	dVal, err := time.Parse("Jan 2006", storedDate)
+	if err != nil {
+		t.Fatalf("Date parsing problem: %v", err)
+	}
+
+	if r.GetReleaseDate() != dVal.Unix() {
+		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), dVal)
+	}
 }
