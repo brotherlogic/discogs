@@ -1,6 +1,11 @@
 mkdir releases
+curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/1059056"  | sed "s/$1/token/g" > releases/1059056
+exit
+
+mkdir releases
 curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/939775"  | sed "s/$1/token/g" > releases/939775
 exit
+
 
 mkdir releases
 curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/372019"  | sed "s/$1/token/g" > releases/372019

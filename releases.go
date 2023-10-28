@@ -80,7 +80,13 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 
 	switch strings.Count(resp.Released, "-") {
 	case 2:
-		if strings.HasSuffix(resp.Released, "-00") {
+		if strings.HasSuffix(resp.Released, "00-00") {
+			rd, err := time.Parse("2006-00-00", resp.Released)
+			if err != nil {
+				return nil, fmt.Errorf("5 unable to parse %v -> %v", resp.Released, err)
+			}
+			r.ReleaseDate = rd.Unix()
+		} else if strings.HasSuffix(resp.Released, "-00") {
 			rd, err := time.Parse("2006-01-00", resp.Released)
 			if err != nil {
 				return nil, fmt.Errorf("2 unable to parse %v -> %v", resp.Released, err)
