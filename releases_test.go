@@ -97,3 +97,17 @@ func TestGetRelease_JustYearAndMonth(t *testing.T) {
 		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), dVal)
 	}
 }
+
+func TestGetRelease_EdgeCase(t *testing.T) {
+	d := GetTestDiscogs()
+
+	r, err := d.GetRelease(context.Background(), 939775)
+
+	if err != nil {
+		t.Fatalf("Failed to get release: %v", err)
+	}
+
+	if r.GetReleaseDate() != 0 {
+		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), 0)
+	}
+}
