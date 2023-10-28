@@ -100,11 +100,16 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 		}
 		r.ReleaseDate = rd.Unix()
 	case 0:
-		rd, err := time.Parse("2006", resp.Released)
-		if err != nil {
-			return nil, fmt.Errorf("0 unable to parse %v -> %v", resp.Released, err)
+		if resp.Released == "" {
+			r.ReleaseDate = 0
+		} else {
+
+			rd, err := time.Parse("2006", resp.Released)
+			if err != nil {
+				return nil, fmt.Errorf("0 unable to parse %v -> %v", resp.Released, err)
+			}
+			r.ReleaseDate = rd.Unix()
 		}
-		r.ReleaseDate = rd.Unix()
 	}
 
 	return r, nil
