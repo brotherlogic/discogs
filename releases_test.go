@@ -111,3 +111,22 @@ func TestGetRelease_EdgeCase(t *testing.T) {
 		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), 0)
 	}
 }
+
+func TestGetRelease_EdgeCase2(t *testing.T) {
+	d := GetTestDiscogs()
+
+	r, err := d.GetRelease(context.Background(), 1059056)
+	if err != nil {
+		t.Fatalf("Failed to get release: %v", err)
+	}
+
+	storedDate := "2002"
+	dVal, err := time.Parse("2006", storedDate)
+	if err != nil {
+		t.Fatalf("Date parsing problem: %v", err)
+	}
+
+	if r.GetReleaseDate() != dVal.Unix() {
+		t.Errorf("Bad release returned: %v -> should have been %v", time.Unix(r.GetReleaseDate(), 0), dVal)
+	}
+}
