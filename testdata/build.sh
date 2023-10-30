@@ -1,3 +1,7 @@
+mkdir -p masters/1693557
+curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/masters/1693557/versions?page=1&per_page=100&sort=released" | sed "s/$1/token/g" > masters/1693557/versions_page=1_per_page=100_sort=released
+exit
+
 mkdir releases
 curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/1059056"  | sed "s/$1/token/g" > releases/1059056
 exit
