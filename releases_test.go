@@ -32,7 +32,6 @@ func TestGetMasterReleases(t *testing.T) {
 
 	found := false
 	for _, release := range rs {
-		log.Printf("Test %v", release)
 		if release.GetId() == 15777447 && release.GetYear() == 2020 {
 			found = true
 		}
