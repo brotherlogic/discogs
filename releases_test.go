@@ -5,6 +5,8 @@ import (
 	"log"
 	"testing"
 	"time"
+
+	pb "github.com/brotherlogic/discogs/proto"
 )
 
 func TestSetRating(t *testing.T) {
@@ -13,6 +15,30 @@ func TestSetRating(t *testing.T) {
 	err := d.SetRating(context.Background(), 3139057, 5)
 	if err != nil {
 		t.Errorf("Failed to set rating: %v", err)
+	}
+}
+
+func TestGetMasterReleases(t *testing.T) {
+	d := GetTestDiscogs()
+
+	rs, err := d.GetMasterReleases(context.Background(), 1693557, 1, pb.MasterSort_BY_YEAR)
+	if err != nil {
+		t.Fatalf("Unable to get master releases: %v", err)
+	}
+
+	if len(rs) != 3 {
+		t.Errorf("Bad number of releases: %v", rs)
+	}
+
+	found := false
+	for _, release := range rs {
+		if release.GetId() == 15777447 && release.GetYear() == 2020 {
+			found = true
+		}
+	}
+
+	if !found {
+		t.Errorf("Did not find key release: %v", rs)
 	}
 }
 

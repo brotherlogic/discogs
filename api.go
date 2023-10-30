@@ -56,5 +56,7 @@ type Discogs interface {
 	AddWant(ctx context.Context, releaseId int64) (*pb.Want, error)
 	DeleteWant(ctx context.Context, wantId int64) error
 
+	GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error)
+
 	Throttle()
 }
