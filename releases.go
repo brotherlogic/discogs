@@ -9,8 +9,6 @@ import (
 	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Rating struct {
@@ -19,8 +17,41 @@ type Rating struct {
 
 type RatingResponse struct{}
 
+type MasterReleasesResponse struct {
+	Versions []MasterRelease
+}
+
+type MasterRelease struct {
+	Id       int
+	Released string
+}
+
 func (p *prodClient) GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error) {
-	return nil, status.Errorf(codes.Unimplemented, "Not done yet")
+	url := fmt.Sprintf("/masters/%v/versions?page=%v&per_page=100", masterId, page)
+	switch sort {
+	case pb.MasterSort_BY_YEAR:
+		url += "&sort=released"
+	}
+
+	resp := &MasterReleasesResponse{}
+	err := p.makeDiscogsRequest("GET", url, "", "/masters/mid/versions", resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var vals []*pb.MasterRelease
+	for _, version := range resp.Versions {
+		conv, err := strconv.ParseInt(version.Released, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		vals = append(vals, &pb.MasterRelease{
+			Id:   int64(version.Id),
+			Year: int32(conv),
+		})
+	}
+
+	return vals, nil
 }
 
 func (p *prodClient) SetRating(ctx context.Context, releaseid int64, rating int32) error {
