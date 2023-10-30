@@ -10,6 +10,7 @@ import (
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Rating struct {
@@ -19,7 +20,7 @@ type Rating struct {
 type RatingResponse struct{}
 
 func (p *prodClient) GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error) {
-	return nil, status.Errrof(codes.Unimplemented, "Not done yet")
+	return nil, status.Errorf(codes.Unimplemented, "Not done yet")
 }
 
 func (p *prodClient) SetRating(ctx context.Context, releaseid int64, rating int32) error {
