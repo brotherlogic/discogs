@@ -27,7 +27,13 @@ func (t *TestDiscogsClient) Throttle() {
 }
 
 func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error) {
-	return nil, nil
+	var mr []*pb.MasterRelease
+	for _, r := range t.collectionRecords {
+		if r.GetMasterId() == masterId {
+			mr = append(mr, &pb.MasterRelease{Id: r.GetId()})
+		}
+	}
+	return mr, nil
 }
 
 func (t *TestDiscogsClient) SetRating(ctx context.Context, releaseId int64, newScore int32) error {
