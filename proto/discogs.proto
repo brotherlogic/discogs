@@ -49,6 +49,7 @@ message Release {
     int32 folder_id = 3;
     int32 rating = 4;
     string title = 7;
+    int64 master_id = 13;
 
     string condition = 8;
     string sleeve_condition = 9;
