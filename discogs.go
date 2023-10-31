@@ -193,6 +193,11 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return err
 	}
 
+	// Not Found
+	if resp.StatusCode == 404 {
+		return status.Errorf(codes.NotFound, string(body))
+	}
+
 	// Throttling
 	if resp.StatusCode == 429 {
 		return status.Errorf(codes.ResourceExhausted, "Discogs is throttling us")
