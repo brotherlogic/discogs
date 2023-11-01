@@ -36,14 +36,14 @@ func (p *prodClient) GetMasterReleases(ctx context.Context, masterId int64, page
 	resp := &MasterReleasesResponse{}
 	err := p.makeDiscogsRequest("GET", url, "", "/masters/mid/versions", resp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to get mids: %w", err)
 	}
 
 	var vals []*pb.MasterRelease
 	for _, version := range resp.Versions {
 		conv, err := strconv.ParseInt(version.Released, 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to parse year: %w", err)
 		}
 		vals = append(vals, &pb.MasterRelease{
 			Id:   int64(version.Id),
@@ -74,7 +74,7 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 	resp := &IndividualRelease{}
 	err := p.makeDiscogsRequest("GET", url, "", "/releases/rid/", resp)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to get release: %w", err)
 	}
 
 	r := &pb.Release{
