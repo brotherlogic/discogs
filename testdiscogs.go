@@ -16,6 +16,7 @@ type TestDiscogsClient struct {
 	Folders           []*pb.Folder
 	Sales             []*pb.SaleItem
 	Rating            map[int64]int32
+	Wants             []*pb.Want
 }
 
 func GetTestClient() *TestDiscogsClient {
@@ -65,6 +66,7 @@ func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.O
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
+	t.Wants = append(t.Wants, &pb.Want{Id: releaseId})
 	return &pb.Want{}, nil
 }
 
@@ -91,7 +93,7 @@ func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releas
 }
 
 func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
-	return []*pb.Want{}, &pb.Pagination{}, nil
+	return t.Wants, &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
