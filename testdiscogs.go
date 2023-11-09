@@ -5,6 +5,7 @@ import (
 	"log"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"golang.org/x/exp/maps"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -16,7 +17,7 @@ type TestDiscogsClient struct {
 	Folders           []*pb.Folder
 	Sales             []*pb.SaleItem
 	Rating            map[int64]int32
-	Wants             []*pb.Want
+	Wants             map[int64]*pb.Want
 }
 
 func GetTestClient() *TestDiscogsClient {
@@ -66,7 +67,7 @@ func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.O
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
-	t.Wants = append(t.Wants, &pb.Want{Id: releaseId})
+	t.Wants[releaseId] = &pb.Want{Id: releaseId}
 	return &pb.Want{}, nil
 }
 
@@ -93,7 +94,7 @@ func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releas
 }
 
 func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
-	return t.Wants, &pb.Pagination{}, nil
+	return maps.Values(t.Wants), &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
