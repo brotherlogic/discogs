@@ -69,11 +69,18 @@ func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.O
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
+	if t.Wants == nil {
+		t.Wants = make(map[int64]*pb.Want)
+	}
 	t.Wants[releaseId] = &pb.Want{Id: releaseId}
 	return &pb.Want{}, nil
 }
 
 func (t *TestDiscogsClient) DeleteWant(ctx context.Context, wantId int64) error {
+	if t.Wants == nil {
+		t.Wants = make(map[int64]*pb.Want)
+	}
+	delete(t.Wants, wantId)
 	return nil
 }
 
@@ -96,6 +103,9 @@ func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releas
 }
 
 func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
+	if t.Wants == nil {
+		t.Wants = make(map[int64]*pb.Want)
+	}
 	return maps.Values(t.Wants), &pb.Pagination{}, nil
 }
 
