@@ -21,7 +21,9 @@ type TestDiscogsClient struct {
 }
 
 func GetTestClient() *TestDiscogsClient {
-	return &TestDiscogsClient{Rating: make(map[int64]int32)}
+	return &TestDiscogsClient{
+		Rating: make(map[int64]int32),
+		Wants:  make(map[int64]*pb.Want)}
 }
 
 func (t *TestDiscogsClient) Throttle() {
