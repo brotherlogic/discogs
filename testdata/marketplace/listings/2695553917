@@ -1,1 +1,97 @@
-{"id": 2695553917, "resource_url": "https://api.discogs.com/marketplace/listings/2695553917", "uri": "https://www.discogs.com/sell/item/2695553917", "status": "For Sale", "condition": "Mint (M)", "sleeve_condition": "Not Graded", "comments": "", "ships_from": "United States", "posted": "2023-08-29T17:23:17-07:00", "allow_offers": false, "audio": false, "price": {"value": 100.23, "currency": "USD"}, "original_price": {"curr_abbr": "USD", "curr_id": 1, "formatted": "$100.23", "value": 100.23}, "shipping_price": {"value": 6.0, "currency": "USD"}, "original_shipping_price": {"curr_abbr": "USD", "curr_id": 1, "formatted": "$6.00", "value": 6}, "seller": {"id": 150295, "username": "BrotherLogic", "avatar_url": "https://secure.gravatar.com/avatar/d44e93769ea7b6bada5578bb0f48f76f?s=500&r=pg&d=mm", "stats": {"rating": "99.6", "stars": 4.5, "total": 682}, "min_order_total": 10.0, "html_url": "https://www.discogs.com/user/BrotherLogic", "uid": 150295, "url": "https://api.discogs.com/users/BrotherLogic", "payment": "PayPal Commerce", "shipping": "I will charge what Discogs charges me for shipping plus a little bit for packing. Any issues are resolved with a partial refund or a full refund, on return of item in the condition it was sent.", "resource_url": "https://api.discogs.com/users/BrotherLogic"}, "release": {"thumbnail": "https://i.discogs.com/AH0UAhrm6z5Ycs1tGn5CTYF-oSL9-Ux3AQ6Tj2a9P_g/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg", "description": "J-Zone - Intoxicated Skull (LP, Album)", "images": [{"type": "secondary", "uri": "https://i.discogs.com/3OI2x6ZO9bYxNvBli7epGXNxq23bO0wF_cqMWAjOo20/rs:fit/g:sm/q:90/h:631/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg", "resource_url": "https://i.discogs.com/3OI2x6ZO9bYxNvBli7epGXNxq23bO0wF_cqMWAjOo20/rs:fit/g:sm/q:90/h:631/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg", "uri150": "https://i.discogs.com/AH0UAhrm6z5Ycs1tGn5CTYF-oSL9-Ux3AQ6Tj2a9P_g/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg", "width": 600, "height": 631}, {"type": "secondary", "uri": "https://i.discogs.com/b_1GggIXYaVQjUqrPyavqT0gr7U4AjaD44lpvjjR3Ck/rs:fit/g:sm/q:90/h:635/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg", "resource_url": "https://i.discogs.com/b_1GggIXYaVQjUqrPyavqT0gr7U4AjaD44lpvjjR3Ck/rs:fit/g:sm/q:90/h:635/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg", "uri150": "https://i.discogs.com/rx-y9iAIhR-TGo15lMBIHDZMJCaa8DjLkeJHurDiabM/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg", "width": 600, "height": 635}], "artist": "J-Zone", "format": "LP, Album", "resource_url": "https://api.discogs.com/releases/27962688", "title": "Intoxicated Skull", "year": 2023, "id": 27962688, "label": "Madlib Invazion Music Library Series", "catalog_number": "MILS003", "stats": {"community": {"in_wantlist": 28, "in_collection": 40}, "user": {"in_wantlist": 0, "in_collection": 1}}}, "in_cart": false, "weight": 230.0, "estimated_weight": 230, "format_quantity": 1, "external_id": "", "location": "", "quantity": 1}
+{
+    "id": 2695553917,
+    "resource_url": "https://api.discogs.com/marketplace/listings/2695553917",
+    "uri": "https://www.discogs.com/sell/item/2695553917",
+    "status": "For Sale",
+    "condition": "Mint (M)",
+    "sleeve_condition": "Not Graded",
+    "comments": "",
+    "ships_from": "United States",
+    "posted": "2023-08-29T17:23:17-07:00",
+    "allow_offers": false,
+    "audio": false,
+    "price": {
+        "value": 100.23,
+        "currency": "USD"
+    },
+    "original_price": {
+        "curr_abbr": "USD",
+        "curr_id": 1,
+        "formatted": "$100.23",
+        "value": 100.23
+    },
+    "shipping_price": {
+        "value": 6.0,
+        "currency": "USD"
+    },
+    "original_shipping_price": {
+        "curr_abbr": "USD",
+        "curr_id": 1,
+        "formatted": "$6.00",
+        "value": 6
+    },
+    "seller": {
+        "id": 150295,
+        "username": "BrotherLogic",
+        "avatar_url": "https://secure.gravatar.com/avatar/d44e93769ea7b6bada5578bb0f48f76f?s=500&r=pg&d=mm",
+        "stats": {
+            "rating": "99.6",
+            "stars": 4.5,
+            "total": 682
+        },
+        "min_order_total": 10.0,
+        "html_url": "https://www.discogs.com/user/BrotherLogic",
+        "uid": 150295,
+        "url": "https://api.discogs.com/users/BrotherLogic",
+        "payment": "PayPal Commerce",
+        "shipping": "I will charge what Discogs charges me for shipping plus a little bit for packing. Any issues are resolved with a partial refund or a full refund, on return of item in the condition it was sent.",
+        "resource_url": "https://api.discogs.com/users/BrotherLogic"
+    },
+    "release": {
+        "thumbnail": "https://i.discogs.com/AH0UAhrm6z5Ycs1tGn5CTYF-oSL9-Ux3AQ6Tj2a9P_g/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg",
+        "description": "J-Zone - Intoxicated Skull (LP, Album)",
+        "images": [
+            {
+                "type": "secondary",
+                "uri": "https://i.discogs.com/3OI2x6ZO9bYxNvBli7epGXNxq23bO0wF_cqMWAjOo20/rs:fit/g:sm/q:90/h:631/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg",
+                "resource_url": "https://i.discogs.com/3OI2x6ZO9bYxNvBli7epGXNxq23bO0wF_cqMWAjOo20/rs:fit/g:sm/q:90/h:631/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg",
+                "uri150": "https://i.discogs.com/AH0UAhrm6z5Ycs1tGn5CTYF-oSL9-Ux3AQ6Tj2a9P_g/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/MzMtNzYzMy5qcGVn.jpeg",
+                "width": 600,
+                "height": 631
+            },
+            {
+                "type": "secondary",
+                "uri": "https://i.discogs.com/b_1GggIXYaVQjUqrPyavqT0gr7U4AjaD44lpvjjR3Ck/rs:fit/g:sm/q:90/h:635/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg",
+                "resource_url": "https://i.discogs.com/b_1GggIXYaVQjUqrPyavqT0gr7U4AjaD44lpvjjR3Ck/rs:fit/g:sm/q:90/h:635/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg",
+                "uri150": "https://i.discogs.com/rx-y9iAIhR-TGo15lMBIHDZMJCaa8DjLkeJHurDiabM/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTYy/Njg4LTE2OTE5Mzkx/NDAtMTEyNy5qcGVn.jpeg",
+                "width": 600,
+                "height": 635
+            }
+        ],
+        "artist": "J-Zone",
+        "format": "LP, Album",
+        "resource_url": "https://api.discogs.com/releases/27962688",
+        "title": "Intoxicated Skull",
+        "year": 2023,
+        "id": 27962688,
+        "label": "Madlib Invazion Music Library Series",
+        "catalog_number": "MILS003",
+        "stats": {
+            "community": {
+                "in_wantlist": 28,
+                "in_collection": 40
+            },
+            "user": {
+                "in_wantlist": 0,
+                "in_collection": 1
+            }
+        }
+    },
+    "in_cart": false,
+    "weight": 230.0,
+    "estimated_weight": 230,
+    "format_quantity": 1,
+    "external_id": "",
+    "location": "",
+    "quantity": 1
+}

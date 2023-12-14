@@ -19,6 +19,7 @@ type SaleJson struct {
 	ReleaseId int64   `json:"release_id"`
 	Condition string  `json:"condition"`
 	Price     float32 `json:"price"`
+	Status    string  `json:"status"`
 }
 
 type Price struct {
@@ -41,6 +42,20 @@ type Release struct {
 type InventoryResponse struct {
 	Pagination Pagination
 	Listings   []GetSaleResponse
+}
+
+func convertSaleStatus(status pb.SaleStatus) string {
+	switch status {
+	case pb.SaleStatus_FOR_SALE:
+		return "For Sale"
+	case pb.SaleStatus_DRAFT:
+		return "Draft"
+	case pb.SaleStatus_EXPIRED:
+		return "Expired"
+	}
+
+	log.Fatalf("Unknown Sale State: %v", status)
+	return "unknown"
 }
 
 func convertStatus(status string) pb.SaleStatus {
@@ -216,6 +231,29 @@ func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int
 
 	data := &SaleJson{
 		Price:     float32(newPrice) / 100,
+		ReleaseId: releaseId,
+		Condition: condition,
+	}
+	v, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	csr := &CreateSaleResponse{}
+	log.Printf("%v", string(v))
+	err = p.makeDiscogsRequest("POST", csURL, string(v), "/marketplace/listings/sid", csr)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *prodClient) UpdateSaleState(ctx context.Context, saleId int64, releaseId int64, condition string, saleState pb.SaleStatus) error {
+	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
+
+	data := &SaleJson{
+		Status:    convertSaleStatus(saleState),
 		ReleaseId: releaseId,
 		Condition: condition,
 	}
