@@ -25,6 +25,15 @@ func TestCreateSale_Success(t *testing.T) {
 	}
 }
 
+func TestExpireSale(t *testing.T) {
+	td := GetTestDiscogs()
+
+	err := td.UpdateSaleState(context.Background(), 2828937565, 1349214, "Very Good Plus (VG+)", pb.SaleStatus_EXPIRED)
+	if err != nil {
+		t.Errorf("Unable to expire sale: %v", err)
+	}
+}
+
 func TestGetSale_Success(t *testing.T) {
 	td := GetTestDiscogs()
 

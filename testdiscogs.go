@@ -30,6 +30,15 @@ func (t *TestDiscogsClient) Throttle() {
 
 }
 
+func (t *TestDiscogsClient) UpdateSaleState(ctx context.Context, saleId int64, releaseId int64, condition string, saleState pb.SaleStatus) error {
+	for _, sale := range t.Sales {
+		if sale.GetSaleId() == saleId {
+			sale.Status = saleState
+		}
+	}
+	return nil
+}
+
 func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error) {
 	var mr []*pb.MasterRelease
 	for _, r := range t.collectionRecords {

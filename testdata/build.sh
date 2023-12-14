@@ -1,3 +1,7 @@
+mkdir -p marketplace/listings
+curl curl -X POST -H "Content-Type:application/json" -d ' {"release_id":1349214,"condition":"Very Good Plus (VG+)","price":0,"status":"Expired"}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/marketplace/listings/2828937565?token=$1" | sed "s/$1/token/g"  > marketplace/listings/2828937565_d600f15743b7dea417c6570448571750
+exit
+
 mkdir -p masters/1693557
 curl --user-agent "GoDiscogsTestData" "https://api.discogs.com/masters/1693557/versions?page=1&per_page=100&sort=released" | sed "s/$1/token/g" > masters/1693557/versions_page=1_per_page=100_sort=released
 exit
