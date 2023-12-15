@@ -1,21 +1,58 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"log"
 	"os"
 
-	"github.com/brotherlogic/discogs"
-
-	pb "github.com/brotherlogic/discogs/proto"
+	"github.com/playwright-community/playwright-go"
 )
 
 func main() {
-	d := discogs.DiscogsWithAuth(os.Args[1], os.Args[2], "https://gramophile.brotherlogic-backend.com/callback")
-	ud := d.ForUser(&pb.User{UserToken: os.Args[3], UserSecret: os.Args[4], Username: "brotherlogic"})
-	fields, err := ud.GetFields(context.Background())
+
+	err := playwright.Install()
 	if err != nil {
-		log.Fatalf("Err: %v", err)
+		log.Fatalf("Unable to install playwright")
 	}
-	log.Printf("Fields: %v", fields)
+
+	pw, err := playwright.Run()
+	if err != nil {
+		log.Fatalf("could not start playwright: %v", err)
+	}
+
+	browser, err := pw.Chromium.Launch()
+	if err != nil {
+		log.Fatalf("could not launch browser: %v", err)
+	}
+
+	context, err := browser.NewContext(playwright.BrowserNewContextOptions{
+		UserAgent: playwright.String("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36"),
+	})
+	if err != nil {
+		log.Fatalf("Context: %v", err)
+	}
+
+	page, err := context.NewPage()
+	if err != nil {
+		log.Fatalf("could not create page: %v", err)
+	}
+	log.Printf("Navigate to %v", os.Args[1])
+	if _, err = page.Goto(os.Args[1], playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateNetworkidle}); err != nil {
+		log.Fatalf("could not goto: %v", err)
+	}
+
+	log.Printf("Navigating")
+	herotitle := page.Locator("body")
+	text, err := herotitle.TextContent()
+	if err != nil {
+		log.Fatalf("Bad: %v", err)
+	}
+	fmt.Print("%v\n", text)
+
+	if err = browser.Close(); err != nil {
+		log.Fatalf("could not close browser: %v", err)
+	}
+	if err = pw.Stop(); err != nil {
+		log.Fatalf("could not stop Playwright: %v", err)
+	}
 }

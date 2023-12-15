@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"github.com/chromedp/chromedp"
 	"github.com/dghubble/oauth1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -123,24 +125,17 @@ var (
 
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
 	if rtype == "SGET" {
-		httpClient := d.getter.getDefault()
-		resp, err := httpClient.Get(path)
+		// create context
+		ctx, cancel := chromedp.NewContext(context.Background())
+		defer cancel()
+
+		var res string
+		err = chromedp.Run(ctx, chromedp.WaitVisible("body"), chromedp.TextContent(`body`, &res))
 		if err != nil {
 			return err
 		}
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		if resp.StatusCode != 200 {
-			return fmt.Errorf("%v: %v", resp.StatusCode, string(body))
-		}
-
-		log.Printf("READ %v", len(string(body)))
 		nobj := obj.(*strpass)
-		nobj.Value = string(body)
+		nobj.Value = string(res)
 		return nil
 	}
 
@@ -208,8 +203,13 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return status.Errorf(codes.PermissionDenied, string(body))
 	}
 
+	// 422 Unprocessable
+	if resp.StatusCode == 422 {
+		return status.Errorf(codes.FailedPrecondition, string(body))
+	}
+
 	if resp.StatusCode != 200 && resp.StatusCode != 204 {
-		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+		return status.Errorf(codes.Unknown, "Unknown response code: %v with body ", resp.StatusCode, string(body))
 	}
 
 	if len(body) > 0 {
