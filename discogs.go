@@ -130,9 +130,6 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		}
 
 		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
 
 		if resp.StatusCode != 200 {
 			return fmt.Errorf("%v: %v", resp.StatusCode, string(body))
@@ -208,8 +205,13 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return status.Errorf(codes.PermissionDenied, string(body))
 	}
 
+	// 422 Unprocessable
+	if resp.StatusCode == 422 {
+		return status.Errorf(codes.FailedPrecondition, string(body))
+	}
+
 	if resp.StatusCode != 200 && resp.StatusCode != 204 {
-		return status.Errorf(codes.Unknown, "Unknown response code: %v", resp.StatusCode)
+		return status.Errorf(codes.Unknown, "Unknown response code: %v with body %v", resp.StatusCode, string(body))
 	}
 
 	if len(body) > 0 {

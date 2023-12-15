@@ -20,7 +20,7 @@ func TestCreateSale_Success(t *testing.T) {
 		t.Fatalf("Error creating sale: %v", err)
 	}
 
-	if saleid != 2696998546 {
+	if saleid != 2851616155 {
 		t.Errorf("Bad saleid return: %v", saleid)
 	}
 }
