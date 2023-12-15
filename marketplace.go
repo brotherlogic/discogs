@@ -233,6 +233,7 @@ func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int
 		Price:     float32(newPrice) / 100,
 		ReleaseId: releaseId,
 		Condition: condition,
+		Status:    "For Sale", // Assumed that sale updates are for sale items
 	}
 	v, err := json.Marshal(data)
 	if err != nil {
