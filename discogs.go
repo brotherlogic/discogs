@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,6 +20,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Option for doing remote downloads
+type Downloader interface {
+	Download(ctx context.Context, url string) (string, error)
+}
+
 const (
 	THROTTLE_REQUESTS = 60
 	THROTTLE_WINDOW   = time.Minute
@@ -34,6 +40,8 @@ type prodClient struct {
 	personalToken string
 
 	requestTimes []time.Time
+
+	downloader Downloader
 }
 
 func (d *prodClient) Throttle() {
@@ -73,7 +81,6 @@ func (o *oauthGetter) getDefault() myClient {
 
 func (o *oauthGetter) get() myClient {
 	oauthToken := oauth1.NewToken(o.key, o.secret)
-	log.Printf("GOT TOKEN %+v", oauthToken)
 	return o.conf.Client(oauth1.NoContext, oauthToken)
 }
 
@@ -101,8 +108,11 @@ func DiscogsWithAuth(key, secret, callback string) Discogs {
 	}
 }
 
+func (p *prodClient) SetDownloader(dl Downloader) {
+	p.downloader = dl
+}
+
 func (p *prodClient) ForUser(user *pb.User) Discogs {
-	log.Printf("For user with %v and %v and %+v", user.GetUserToken(), user.GetUserSecret(), p.getter.config())
 	return &prodClient{
 		key:      p.key,
 		secret:   p.secret,
@@ -123,6 +133,17 @@ var (
 
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
 	if rtype == "SGET" {
+		if d.downloader != nil {
+			data, err := d.downloader.Download(context.Background(), path)
+			if err != nil {
+				return err
+			}
+
+			nobj := obj.(*strpass)
+			nobj.Value = data
+			return nil
+		}
+
 		httpClient := d.getter.getDefault()
 		resp, err := httpClient.Get(path)
 		if err != nil {

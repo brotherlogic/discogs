@@ -30,6 +30,8 @@ type Discogs interface {
 
 	GetUserId() int32
 
+	SetDownloader(downloader Downloader)
+
 	ForUser(user *pb.User) Discogs
 
 	GetFields(ctx context.Context) ([]*pb.Field, error)
