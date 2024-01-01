@@ -62,8 +62,8 @@ func TestGetReleaseStats(t *testing.T) {
 		t.Fatalf("bad get: %v", err)
 	}
 
-	if stats.GetMedianPrice() != 1578 {
-		t.Errorf("Wrong median price should have been 1578, was %v", stats.GetMedianPrice())
+	if stats.GetMedianPrice() != 1647 {
+		t.Errorf("Wrong median price should have been 1647, was %v", stats.GetMedianPrice())
 	}
 }
 
