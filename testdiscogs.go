@@ -102,6 +102,10 @@ func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.Sale
 	return &pb.SaleItem{}, nil
 }
 
+func (t *TestDiscogsClient) SetDownloader(_ Downloader) {
+	// Do nothing
+}
+
 func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error {
 	for _, sale := range t.Sales {
 		if sale.GetSaleId() == saleId {
