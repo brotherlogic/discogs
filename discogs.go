@@ -134,6 +134,7 @@ var (
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
 	if rtype == "SGET" {
 		if d.downloader != nil {
+			log.Printf("Running SGET with specified downloader")
 			data, err := d.downloader.Download(context.Background(), path)
 			if err != nil {
 				return err
@@ -144,6 +145,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			return nil
 		}
 
+		log.Printf("Running SGET with local downloader")
 		httpClient := d.getter.getDefault()
 		resp, err := httpClient.Get(path)
 		if err != nil {
