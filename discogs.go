@@ -122,6 +122,7 @@ func (p *prodClient) ForUser(user *pb.User) Discogs {
 		},
 		personalToken: user.GetPersonalToken(),
 		user:          user,
+		downloader:    p.downloader,
 	}
 }
 
