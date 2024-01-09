@@ -67,6 +67,7 @@ message Release {
 
 message ReleaseStats {
     int32 median_price = 1;
+    int32 low_price = 2;
 }
 
 message Label {
