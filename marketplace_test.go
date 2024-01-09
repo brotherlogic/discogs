@@ -65,6 +65,10 @@ func TestGetReleaseStats(t *testing.T) {
 	if stats.GetMedianPrice() != 1647 {
 		t.Errorf("Wrong median price should have been 1647, was %v", stats.GetMedianPrice())
 	}
+
+	if stats.GetLowPrice() != 922 {
+		t.Errorf("Wrong low price; should have been 922, was %v", stats.GetLowPrice())
+	}
 }
 
 func TestGetReleaseStats_CornerCase(t *testing.T) {
