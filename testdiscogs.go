@@ -145,6 +145,7 @@ func (t *TestDiscogsClient) GetReleaseStats(ctx context.Context, releaseId int64
 }
 
 func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
+	t.UserId = user.GetDiscogsUserId()
 	return t
 }
 
