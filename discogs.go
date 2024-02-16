@@ -154,8 +154,11 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
 
-		if resp.StatusCode != 200 {
+		if resp.StatusCode != 200 && resp.StatusCode != 201 {
 			return fmt.Errorf("%v: %v", resp.StatusCode, string(body))
 		}
 
