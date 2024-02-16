@@ -237,14 +237,14 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return status.Errorf(codes.FailedPrecondition, string(body))
 	}
 
-	if resp.StatusCode != 200 && resp.StatusCode != 204 {
+	if resp.StatusCode != 200 && resp.StatusCode != 204 && resp.StatusCode != 201 {
 		return status.Errorf(codes.Unknown, "Unknown response code: %v with body %v", resp.StatusCode, string(body))
 	}
 
 	if len(body) > 0 {
 		err = json.Unmarshal(body, obj)
 		if err != nil {
-			return fmt.Errorf("Unarshal error (processing %v): %v from %v", err, string(body), data)
+			return fmt.Errorf("unmarshal error (processing %v): %v from %v", err, string(body), data)
 		}
 	}
 	return nil
