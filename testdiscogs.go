@@ -11,13 +11,15 @@ import (
 )
 
 type TestDiscogsClient struct {
-	collectionRecords []*pb.Release
-	UserId            int32
-	Fields            []*pb.Field
-	Folders           []*pb.Folder
-	Sales             []*pb.SaleItem
-	Rating            map[int64]int32
-	Wants             map[int64]*pb.Want
+	collectionRecords    []*pb.Release
+	nonCollectionRecords []*pb.Release
+	UserId               int32
+	Fields               []*pb.Field
+	Folders              []*pb.Folder
+	Sales                []*pb.SaleItem
+	Rating               map[int64]int32
+	Wants                map[int64]*pb.Want
+	Masters              map[int64]*pb.Release
 }
 
 func GetTestClient() *TestDiscogsClient {
@@ -133,6 +135,12 @@ func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*p
 		}
 	}
 
+	for _, r := range t.nonCollectionRecords {
+		if r.GetId() == releaseId {
+			return r, nil
+		}
+	}
+
 	return nil, status.Errorf(codes.NotFound, "Unable to locate %v", releaseId)
 }
 
@@ -170,6 +178,13 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	t.collectionRecords = append(t.collectionRecords, r)
 }
 
+func (t *TestDiscogsClient) AddCNonollectionRelease(r *pb.Release) {
+	if t.collectionRecords == nil {
+		t.nonCollectionRecords = make([]*pb.Release, 0)
+	}
+	t.nonCollectionRecords = append(t.collectionRecords, r)
+}
+
 func (t *TestDiscogsClient) GetLoginURL() (string, string, string, error) {
 	return "", "madeuptoken", "madeupysecret", nil
 }
@@ -182,5 +197,5 @@ func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error
 }
 
 func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
-	return t.collectionRecords, &pb.Pagination{}, nil
+	return append(t.collectionRecords, t.nonCollectionRecords...), &pb.Pagination{}, nil
 }
