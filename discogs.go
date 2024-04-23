@@ -154,7 +154,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 				"request_type":  "SGET",
 				"endpoint":      ep,
 				"response":      fmt.Sprintf("%v", err),
-				"response_code": fmt.Sprintf("-1")})
+				"response_code": fmt.Sprintf("-1")}).Inc()
 
 			return err
 		}
@@ -163,7 +163,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 			"request_type":  "SGET",
 			"endpoint":      ep,
 			"response":      fmt.Sprintf("%v", err),
-			"response_code": fmt.Sprintf("%v", status.Code(err))})
+			"response_code": fmt.Sprintf("%v", status.Code(err))}).Inc()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -219,10 +219,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
 	if err != nil {
-		requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"})
+		requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"}).Inc()
 		return err
 	}
-	requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)})
+	requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)}).Inc()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
