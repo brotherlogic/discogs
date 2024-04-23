@@ -150,8 +150,20 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		httpClient := d.getter.getDefault()
 		resp, err := httpClient.Get(path)
 		if err != nil {
+			requestCounter.With(prometheus.Labels{
+				"request_type":  "SGET",
+				"endpoint":      ep,
+				"response":      fmt.Sprintf("%v", err),
+				"response_code": fmt.Sprintf("-1")})
+
 			return err
 		}
+
+		requestCounter.With(prometheus.Labels{
+			"request_type":  "SGET",
+			"endpoint":      ep,
+			"response":      fmt.Sprintf("%v", err),
+			"response_code": fmt.Sprintf("%v", status.Code(err))})
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
