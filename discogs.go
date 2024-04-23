@@ -219,10 +219,10 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
 	if err != nil {
-		requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"})
+		requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"})
 		return err
 	}
-	requestCounter.With(prometheus.Labels{"request_type": "POST", "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)})
+	requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": fmt.Sprintf("%v", resp.StatusCode)})
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
