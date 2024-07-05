@@ -27,6 +27,7 @@ type Discogs interface {
 	GetDiscogsUser(ctx context.Context) (*pb.User, error)
 
 	GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error)
+	GetCollectionRelease(ctx context.Context, iid int64, page int32) ([]*pb.Release, *pb.Pagination, error)
 
 	GetUserId() int32
 
