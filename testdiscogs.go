@@ -178,6 +178,16 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	t.collectionRecords = append(t.collectionRecords, r)
 }
 
+func (t *TestDiscogsClient) GetCollectionRelease(ctx context.Context, id int64, page int32) ([]*pb.Release, *pb.Pagination, error) {
+	var ret []*pb.Release
+	for _, r := range t.collectionRecords {
+		if r.Id == id {
+			ret = append(ret, r)
+		}
+	}
+	return ret, &pb.Pagination{}, nil
+}
+
 func (t *TestDiscogsClient) AddCNonollectionRelease(r *pb.Release) {
 	if t.collectionRecords == nil {
 		t.nonCollectionRecords = make([]*pb.Release, 0)

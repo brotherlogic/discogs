@@ -1,3 +1,7 @@
+mkdir -p users/brotherlogic/collection/releases/
+curl -X GET -H "Content-Type:application/json" --user-agent "GoDiscogsTestData" "https://api.discogs.com//users/brotherlogic/collection/releases/550078?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/releases/550078_page=1
+exit
+
 
 mkdir release
 curl https://www.discogs.com/release/625928 > release/625928
