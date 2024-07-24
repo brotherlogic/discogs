@@ -144,7 +144,7 @@ func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*p
 	return nil, status.Errorf(codes.NotFound, "Unable to locate %v", releaseId)
 }
 
-func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
+func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId int64, folderId, newFolderId int32) error {
 	return nil
 }
 
