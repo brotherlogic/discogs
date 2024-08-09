@@ -82,6 +82,10 @@ func TestGetRelease(t *testing.T) {
 	if !labelFound {
 		t.Errorf("Did not find label: %v", r)
 	}
+
+	if r.GetMasterId() != 38998 {
+		t.Errorf("Failed to get master: %v", r.GetMasterId())
+	}
 }
 
 func TestGetRelease_JustYear(t *testing.T) {
