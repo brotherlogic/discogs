@@ -39,6 +39,7 @@ type IndividualRelease struct {
 	InstanceId       int `json:"instance_id"`
 	FolderId         int `json:"folder_id"`
 	Rating           int
+	MasterId         int `json:"master_id"`
 	Title            string
 	BasicInformation BasicInformation `json:"basic_information"`
 	Released         string
