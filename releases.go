@@ -12,7 +12,7 @@ import (
 )
 
 type Rating struct {
-	Rating int
+	Rating int `json:"rating"`
 }
 
 type RatingResponse struct{}

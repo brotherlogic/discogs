@@ -99,6 +99,7 @@ func (t *tClient) Post(url, contentType string, body io.Reader) (*http.Response,
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("POSTING: %v", buf.String())
 	return t.Get(url + "_" + hash(buf.String()))
 }
 
