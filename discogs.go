@@ -210,6 +210,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	case "PUT":
 		req, _ := http.NewRequest("PUT", fullPath, bytes.NewBuffer([]byte(data)))
 		req.Header.Set("Content-Type", "application/json")
+		log.Printf("DATA: %v", string(data))
 		resp, err = httpClient.Do(req)
 	case "DELETE":
 		req, _ := http.NewRequest("DELETE", fullPath, bytes.NewBuffer([]byte("")))

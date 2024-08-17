@@ -99,6 +99,7 @@ func (t *tClient) Post(url, contentType string, body io.Reader) (*http.Response,
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("POSTING: %v", buf.String())
 	return t.Get(url + "_" + hash(buf.String()))
 }
 
@@ -216,5 +217,25 @@ func TestDeleteFolder(t *testing.T) {
 	err := td.DeleteFolder(context.Background(), 6259627)
 	if err != nil {
 		t.Fatalf("Error deleting folder: %v", err)
+	}
+}
+
+func TestGetCollectionRelease(t *testing.T) {
+	td := GetTestDiscogs()
+	r, _, err := td.GetCollectionRelease(context.Background(), 550078, 1)
+	if err != nil {
+		t.Fatalf("Unable to get release: %v", err)
+	}
+
+	if len(r) != 1 {
+		t.Fatalf("Bad pull: %v", len(r))
+	}
+
+	if r[0].GetTitle() != "Tra La La / Stand Up And Be A Man" {
+		t.Errorf("Bad title pull: %v", r[0])
+	}
+
+	if r[0].GetFolderId() != 1613206 {
+		t.Errorf("Bad folder id: %v", r[0])
 	}
 }

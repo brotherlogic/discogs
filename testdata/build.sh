@@ -1,3 +1,12 @@
+mkdir -p releases/1671276/rating
+curl -X PUT -H "Content-Type:application/json" -d '{"rating":3}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/1671276/rating/BrotherLogic?token=$1" | sed "s/$1/token/g" > releases/1671276/rating/brotherlogic_5f3a611abe3a6aaa60721944add83b16
+exit
+
+
+mkdir -p users/brotherlogic/collection/releases/
+curl -X GET -H "Content-Type:application/json" --user-agent "GoDiscogsTestData" "https://api.discogs.com//users/brotherlogic/collection/releases/550078?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/releases/550078_page=1
+exit
+
 
 mkdir release
 curl https://www.discogs.com/release/625928 > release/625928
@@ -50,10 +59,6 @@ exit
 
 mkdir release
 curl https://www.discogs.com/release/625928 > release/625928
-exit
-
-mkdir -p releases/3139057/rating
-curl -X PUT -H "Content-Type:application/json" -d '{"rating": 5}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/3139057/rating/BrotherLogic?token=$1" | sed "s/$1/token/g" > releases/3139057/rating/brotherlogic_36359a9186d72b959187df1ff3afb788
 exit
 
 mkdir -p users/brotherlogic/collection/folders/0/releases/1163112/instances/19867414/fields/

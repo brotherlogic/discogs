@@ -12,7 +12,7 @@ import (
 )
 
 type Rating struct {
-	Rating int
+	Rating int `json:"rating"`
 }
 
 type RatingResponse struct{}
@@ -88,6 +88,7 @@ func (p *prodClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Relea
 		FolderId:   int32(resp.FolderId),
 		Rating:     int32(resp.Rating),
 		Title:      resp.Title,
+		MasterId:   int64(resp.MasterId),
 	}
 
 	var formats []*pb.Format

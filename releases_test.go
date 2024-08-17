@@ -9,6 +9,15 @@ import (
 	pb "github.com/brotherlogic/discogs/proto"
 )
 
+func TestSetRatingEdge(t *testing.T) {
+	d := GetTestDiscogs()
+
+	err := d.SetRating(context.Background(), 1671276, 3)
+	if err != nil {
+		t.Errorf("Failed to set rating: %v", err)
+	}
+}
+
 func TestSetRating(t *testing.T) {
 	d := GetTestDiscogs()
 
@@ -81,6 +90,10 @@ func TestGetRelease(t *testing.T) {
 	}
 	if !labelFound {
 		t.Errorf("Did not find label: %v", r)
+	}
+
+	if r.GetMasterId() != 38998 {
+		t.Errorf("Failed to get master: %v", r.GetMasterId())
 	}
 }
 

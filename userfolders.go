@@ -23,7 +23,7 @@ type NewFolder struct {
 	FolderId int `json:"folder_id"`
 }
 
-func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
+func (p *prodClient) SetFolder(ctx context.Context, instanceId, releaseId int64, folderId, newFolderId int32) error {
 	data := &NewFolder{
 		FolderId: int(newFolderId),
 	}

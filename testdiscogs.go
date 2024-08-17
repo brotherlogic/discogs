@@ -144,7 +144,7 @@ func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*p
 	return nil, status.Errorf(codes.NotFound, "Unable to locate %v", releaseId)
 }
 
-func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId, folderId, newFolderId int64) error {
+func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId int64, folderId, newFolderId int32) error {
 	return nil
 }
 
@@ -176,6 +176,16 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 		t.collectionRecords = make([]*pb.Release, 0)
 	}
 	t.collectionRecords = append(t.collectionRecords, r)
+}
+
+func (t *TestDiscogsClient) GetCollectionRelease(ctx context.Context, id int64, page int32) ([]*pb.Release, *pb.Pagination, error) {
+	var ret []*pb.Release
+	for _, r := range t.collectionRecords {
+		if r.Id == id {
+			ret = append(ret, r)
+		}
+	}
+	return ret, &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) AddCNonollectionRelease(r *pb.Release) {
