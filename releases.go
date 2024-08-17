@@ -56,6 +56,12 @@ func (p *prodClient) GetMasterReleases(ctx context.Context, masterId int64, page
 
 func (p *prodClient) SetRating(ctx context.Context, releaseid int64, rating int32) error {
 	url := fmt.Sprintf("/releases/%v/rating/%v", releaseid, p.user.GetUsername())
+	resp := &RatingResponse{}
+
+	if rating == 0 {
+		return p.makeDiscogsRequest("DELETE", url, "", "/releases/rid/rating/uname", resp)
+	}
+
 	data := &Rating{
 		Rating: int(rating),
 	}
@@ -64,7 +70,6 @@ func (p *prodClient) SetRating(ctx context.Context, releaseid int64, rating int3
 		return err
 	}
 
-	resp := &RatingResponse{}
 	return p.makeDiscogsRequest("PUT", url, string(v), "/releases/rid/rating/uname", resp)
 }
 
