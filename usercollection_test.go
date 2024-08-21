@@ -60,6 +60,7 @@ func (t *tClient) Do(req *http.Request) (*http.Response, error) {
 	if req.Method == "DELETE" {
 		return t.Get(fmt.Sprintf("%v", req.URL))
 	}
+	log.Printf("HASH: %v", string(body))
 	return t.Get(fmt.Sprintf("%v_%v", req.URL, hash(string(body))))
 }
 
@@ -238,4 +239,5 @@ func TestGetCollectionRelease(t *testing.T) {
 	if r[0].GetFolderId() != 1613206 {
 		t.Errorf("Bad folder id: %v", r[0])
 	}
+
 }

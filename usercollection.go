@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"google.golang.org/grpc/codes"
@@ -32,6 +34,7 @@ type CollectionRelease struct {
 	Notes            []Note
 	BasicInformation BasicInformation `json:"basic_information"`
 	Released         string
+	DateAdded        string `json:"date_added"`
 }
 
 type IndividualRelease struct {
@@ -121,6 +124,12 @@ func (d *prodClient) GetCollectionRelease(ctx context.Context, id int64, page in
 
 	var rs []*pb.Release
 	for _, release := range cr.Releases {
+		log.Printf("HERE: %v", release.BasicInformation)
+		d, err := time.Parse("2006-01-02T15:04:05-07:00", release.DateAdded)
+		if err != nil {
+			return nil, nil, fmt.Errorf("Cannot parse %v: %w", release.DateAdded, err)
+		}
+
 		r := &pb.Release{
 			InstanceId: int64(release.InstanceId),
 			Id:         int64(release.Id),
@@ -128,6 +137,7 @@ func (d *prodClient) GetCollectionRelease(ctx context.Context, id int64, page in
 			Rating:     int32(release.Rating),
 			Title:      release.BasicInformation.Title,
 			Notes:      make(map[int32]string),
+			DateAdded:  d.UnixNano(),
 		}
 
 		for _, note := range release.Notes {
