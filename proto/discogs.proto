@@ -61,6 +61,7 @@ message Release {
     map<int32, string> notes = 10;
 
     int64 release_date = 11;
+    int64 date_added = 14;
 }
 
 
