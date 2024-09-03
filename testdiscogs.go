@@ -48,6 +48,11 @@ func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int6
 			mr = append(mr, &pb.MasterRelease{Id: r.GetId()})
 		}
 	}
+	for _, r := range t.nonCollectionRecords {
+		if r.GetMasterId() == masterId {
+			mr = append(mr, &pb.MasterRelease{Id: r.GetId()})
+		}
+	}
 	return mr, nil
 }
 
