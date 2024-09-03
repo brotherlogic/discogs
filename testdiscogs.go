@@ -192,7 +192,7 @@ func (t *TestDiscogsClient) AddCNonollectionRelease(r *pb.Release) {
 	if t.collectionRecords == nil {
 		t.nonCollectionRecords = make([]*pb.Release, 0)
 	}
-	t.nonCollectionRecords = append(t.collectionRecords, r)
+	t.nonCollectionRecords = append(t.nonCollectionRecords, r)
 }
 
 func (t *TestDiscogsClient) GetLoginURL() (string, string, string, error) {
