@@ -57,6 +57,9 @@ func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int6
 }
 
 func (t *TestDiscogsClient) SetRating(ctx context.Context, releaseId int64, newScore int32) error {
+	if t.Rating == nil {
+		t.Rating = make(map[int64]int32)
+	}
 	t.Rating[releaseId] = newScore
 	return nil
 }
