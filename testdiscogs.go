@@ -20,6 +20,7 @@ type TestDiscogsClient struct {
 	Rating               map[int64]int32
 	Wants                map[int64]*pb.Want
 	Masters              map[int64]*pb.Release
+	callCount            int32
 }
 
 func GetTestClient() *TestDiscogsClient {
@@ -32,7 +33,12 @@ func (t *TestDiscogsClient) Throttle() {
 
 }
 
+func (t *TestDiscogsClient) GetCallCount() int32 {
+	return t.callCount
+}
+
 func (t *TestDiscogsClient) UpdateSaleState(ctx context.Context, saleId int64, releaseId int64, condition string, saleState pb.SaleStatus) error {
+	t.callCount++
 	for _, sale := range t.Sales {
 		if sale.GetSaleId() == saleId {
 			sale.Status = saleState
@@ -42,6 +48,7 @@ func (t *TestDiscogsClient) UpdateSaleState(ctx context.Context, saleId int64, r
 }
 
 func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int64, page int32, sort pb.MasterSort) ([]*pb.MasterRelease, error) {
+	t.callCount++
 	var mr []*pb.MasterRelease
 	for _, r := range t.collectionRecords {
 		if r.GetMasterId() == masterId {
@@ -57,6 +64,7 @@ func (t *TestDiscogsClient) GetMasterReleases(ctx context.Context, masterId int6
 }
 
 func (t *TestDiscogsClient) SetRating(ctx context.Context, releaseId int64, newScore int32) error {
+	t.callCount++
 	if t.Rating == nil {
 		t.Rating = make(map[int64]int32)
 	}
@@ -69,10 +77,12 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 }
 
 func (t *TestDiscogsClient) CreateSale(ctx context.Context, params SaleParams) (int64, error) {
+	t.callCount++
 	return 1234, nil
 }
 
 func (t *TestDiscogsClient) CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error) {
+	t.callCount++
 	folder := &pb.Folder{Name: folderName, Id: 123}
 	t.Folders = append(t.Folders, folder)
 	log.Printf("Added folder: %v", t.Folders)
@@ -80,14 +90,17 @@ func (t *TestDiscogsClient) CreateFolder(ctx context.Context, folderName string)
 }
 
 func (t *TestDiscogsClient) DeleteFolder(ctx context.Context, folderId int32) error {
+	t.callCount++
 	return nil
 }
 
 func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, error) {
+	t.callCount++
 	return &pb.Order{}, nil
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
+	t.callCount++
 	if t.Wants == nil {
 		t.Wants = make(map[int64]*pb.Want)
 	}
@@ -96,6 +109,7 @@ func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.W
 }
 
 func (t *TestDiscogsClient) DeleteWant(ctx context.Context, wantId int64) error {
+	t.callCount++
 	if t.Wants == nil {
 		t.Wants = make(map[int64]*pb.Want)
 	}
@@ -104,6 +118,7 @@ func (t *TestDiscogsClient) DeleteWant(ctx context.Context, wantId int64) error 
 }
 
 func (t *TestDiscogsClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
+	t.callCount++
 	for _, sale := range t.Sales {
 		if sale.GetSaleId() == saleId {
 			return sale, nil
@@ -117,6 +132,7 @@ func (t *TestDiscogsClient) SetDownloader(_ Downloader) {
 }
 
 func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error {
+	t.callCount++
 	for _, sale := range t.Sales {
 		if sale.GetSaleId() == saleId {
 			sale.Price.Value = newPrice
@@ -126,6 +142,7 @@ func (t *TestDiscogsClient) UpdateSale(ctx context.Context, saleId int64, releas
 }
 
 func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Want, *pb.Pagination, error) {
+	t.callCount++
 	if t.Wants == nil {
 		t.Wants = make(map[int64]*pb.Want)
 	}
@@ -133,10 +150,12 @@ func (t *TestDiscogsClient) GetWants(ctx context.Context, page int32) ([]*pb.Wan
 }
 
 func (t *TestDiscogsClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
+	t.callCount++
 	return t.Sales, &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*pb.Release, error) {
+	t.callCount++
 	for _, r := range t.collectionRecords {
 		if r.GetId() == releaseId {
 			return r, nil
@@ -153,10 +172,12 @@ func (t *TestDiscogsClient) GetRelease(ctx context.Context, releaseId int64) (*p
 }
 
 func (t *TestDiscogsClient) SetFolder(ctx context.Context, instanceId, releaseId int64, folderId, newFolderId int32) error {
+	t.callCount++
 	return nil
 }
 
 func (t *TestDiscogsClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error) {
+	t.callCount++
 	return &pb.ReleaseStats{}, nil
 }
 
@@ -166,20 +187,24 @@ func (t *TestDiscogsClient) ForUser(user *pb.User) Discogs {
 }
 
 func (t *TestDiscogsClient) GetUserFolders(_ context.Context) ([]*pb.Folder, error) {
+	t.callCount++
 	log.Printf("Getting folders: %v", t.Folders)
 	return t.Folders, nil
 }
 
 func (t *TestDiscogsClient) GetFields(_ context.Context) ([]*pb.Field, error) {
+	t.callCount++
 	return t.Fields, nil
 }
 
 func (t *TestDiscogsClient) SetField(ctx context.Context, r *pb.Release, fnum int, value string) error {
+	t.callCount++
 	t.Fields = append(t.Fields, &pb.Field{Name: value, Id: int32(fnum)})
 	return nil
 }
 
 func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
+	t.callCount++
 	if t.collectionRecords == nil {
 		t.collectionRecords = make([]*pb.Release, 0)
 	}
@@ -187,6 +212,7 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 }
 
 func (t *TestDiscogsClient) GetCollectionRelease(ctx context.Context, id int64, page int32) ([]*pb.Release, *pb.Pagination, error) {
+	t.callCount++
 	var ret []*pb.Release
 	for _, r := range t.collectionRecords {
 		if r.Id == id {
@@ -215,5 +241,6 @@ func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error
 }
 
 func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
+	t.callCount++
 	return append(t.collectionRecords, t.nonCollectionRecords...), &pb.Pagination{}, nil
 }

@@ -42,6 +42,12 @@ type prodClient struct {
 	requestTimes []time.Time
 
 	downloader Downloader
+
+	callCount int32
+}
+
+func (d *prodClient) GetCallCount() int32 {
+	return d.callCount
 }
 
 func (d *prodClient) Throttle() {
@@ -133,6 +139,7 @@ var (
 )
 
 func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep string, obj interface{}) error {
+	d.callCount++
 	if rtype == "SGET" {
 		if d.downloader != nil {
 			log.Printf("Running SGET with specified downloader")

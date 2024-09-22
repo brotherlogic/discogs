@@ -21,6 +21,8 @@ type SaleParams struct {
 }
 
 type Discogs interface {
+	GetCallCount() int32
+
 	GetLoginURL() (string, string, string, error)
 	HandleDiscogsResponse(ctx context.Context, secret, token, verifier string) (string, string, error)
 
