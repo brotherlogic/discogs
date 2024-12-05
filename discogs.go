@@ -208,6 +208,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	}
 
 	log.Printf("DISCOGS_REQUEST %v:%v", rtype, fullPath)
+	t := time.Now()
 
 	switch rtype {
 	case "POST":
@@ -226,6 +227,7 @@ func (d *prodClient) makeDiscogsRequest(rtype, path string, data string, ep stri
 	default:
 		return fmt.Errorf("Unable to handle %v requests", rtype)
 	}
+	log.Printf("Request %v/%v took %v", rtype, fullPath, time.Since(t))
 	if err != nil {
 		requestCounter.With(prometheus.Labels{"request_type": rtype, "endpoint": ep, "response": fmt.Sprintf("%v", status.Code(err)), "response_code": "-1"}).Inc()
 		return err
