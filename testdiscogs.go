@@ -222,8 +222,8 @@ func (t *TestDiscogsClient) GetCollectionRelease(ctx context.Context, id int64, 
 	return ret, &pb.Pagination{}, nil
 }
 
-func (t *TestDiscogsClient) AddCNonollectionRelease(r *pb.Release) {
-	if t.collectionRecords == nil {
+func (t *TestDiscogsClient) AddNonCollectionRelease(r *pb.Release) {
+	if t.nonCollectionRecords == nil {
 		t.nonCollectionRecords = make([]*pb.Release, 0)
 	}
 	t.nonCollectionRecords = append(t.nonCollectionRecords, r)
@@ -242,5 +242,5 @@ func (t *TestDiscogsClient) GetDiscogsUser(ctx context.Context) (*pb.User, error
 
 func (t *TestDiscogsClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	t.callCount++
-	return append(t.collectionRecords, t.nonCollectionRecords...), &pb.Pagination{}, nil
+	return append(t.collectionRecords), &pb.Pagination{}, nil
 }
