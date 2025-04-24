@@ -211,6 +211,15 @@ func (t *TestDiscogsClient) AddCollectionRelease(r *pb.Release) {
 	t.collectionRecords = append(t.collectionRecords, r)
 }
 
+func (t *TestDiscogsClient) AddRelease(ctx context.Context, id, folder int64) (int64, error) {
+	t.callCount++
+	if t.collectionRecords == nil {
+		t.collectionRecords = make([]*pb.Release, 0)
+	}
+	t.collectionRecords = append(t.collectionRecords, &pb.Release{Id: id, FolderId: int32(folder)})
+	return id, nil
+}
+
 func (t *TestDiscogsClient) GetCollectionRelease(ctx context.Context, id int64, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	t.callCount++
 	var ret []*pb.Release
