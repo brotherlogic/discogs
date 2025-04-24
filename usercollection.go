@@ -181,6 +181,19 @@ func (d *prodClient) GetCollectionRelease(ctx context.Context, id int64, page in
 
 }
 
+type AddResponse struct {
+	InstanceId int64 `json:instance_id`
+}
+
+func (d *prodClient) AddRelease(ctx context.Context, id, folder int64) (int64, error) {
+	ar := &AddResponse{}
+	err := d.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v", d.user.GetUsername(), id, folder), "", "/users/uname/collection/folders/0/releases", ar)
+	if err != nil {
+		return 0, err
+	}
+	return ar.InstanceId, nil
+}
+
 func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	cr := &CollectionResponse{}
 	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", d.user.GetUsername(), page), "", "/users/uname/collection/folders/0/releases", cr)
