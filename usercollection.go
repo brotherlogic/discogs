@@ -187,7 +187,7 @@ type AddResponse struct {
 
 func (d *prodClient) AddRelease(ctx context.Context, id, folder int64) (int64, error) {
 	ar := &AddResponse{}
-	err := d.makeDiscogsRequest("POST", fmt.Sprintf("users/%v/collection/folders/%v/releases/%v", d.user.GetUsername(), folder, id), "", "/users/uname/collection/folders/0/releases", ar)
+	err := d.makeDiscogsRequest("POST", fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v", d.user.GetUsername(), folder, id), "", "/users/uname/collection/folders/0/releases", ar)
 	if err != nil {
 		return 0, fmt.Errorf("unable to add %v to %v (%v) -> %w", id, folder, fmt.Sprintf("/users/%v/collection/folders/%v/releases/%v", d.user.GetUsername(), folder, id), err)
 	}
