@@ -182,7 +182,7 @@ func (d *prodClient) GetCollectionRelease(ctx context.Context, id int64, page in
 }
 
 type AddResponse struct {
-	InstanceId int64 `json:instance_id`
+	InstanceId int64 `json:"instance_id"`
 }
 
 func (d *prodClient) AddRelease(ctx context.Context, id, folder int64) (int64, error) {
