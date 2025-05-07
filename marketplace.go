@@ -9,17 +9,12 @@ import (
 	"strconv"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CreateSaleResponse struct {
 	ListingId int64 `json:"listing_id"`
-}
-
-type SaleJson struct {
-	ReleaseId int64   `json:"release_id"`
-	Condition string  `json:"condition"`
-	Price     float32 `json:"price"`
-	Status    string  `json:"status"`
 }
 
 type Price struct {
@@ -215,15 +210,42 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 	}, nil
 }
 
+type SaleParams struct {
+	ReleaseId       int64   `json:"release_id"`
+	Condition       string  `json:"condition"`
+	SleeveCondition string  `json:"sleeve_condition"`
+	Price           float32 `json:"price"`
+	Comments        string  `json:"comments"`
+	AllowOffers     bool    `json:"allow_offers"`
+	Status          string  `json:"status"`
+	ExternalId      string  `json:"external_id"`
+	Location        string  `json:"location"`
+	Weight          int32   `json:"weight"`
+	FormatQuantity  int32   `json:"format_quantity"`
+}
+
 func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, error) {
 	csURL := fmt.Sprintf("/marketplace/listings")
 
-	data := &SaleJson{
-		ReleaseId: int64(params.ReleaseId),
-		Condition: params.Condition,
-		Price:     float32(params.Price) / 100,
+	// Validate the sale parameters
+	if params.ReleaseId == 0 {
+		return 0, status.Errorf(codes.InvalidArgument, "No release ID provided")
 	}
-	v, err := json.Marshal(data)
+	if params.Condition == "" {
+		return 0, status.Errorf(codes.InvalidArgument, "No condition provided")
+	}
+	if params.Price == 0 {
+		return 0, status.Errorf(codes.InvalidArgument, "No price provided")
+	}
+	if params.Status == "" {
+		return 0, status.Errorf(codes.InvalidArgument, "No status provided")
+	}
+
+	if params.Status != "For Sale" && params.Status != "Draft" {
+		return 0, status.Errorf(codes.InvalidArgument, "Invalid status provided: %v", params.Status)
+	}
+
+	v, err := json.Marshal(params)
 	if err != nil {
 		return -1, err
 	}
@@ -246,7 +268,7 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error {
 	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
-	data := &SaleJson{
+	data := &SaleParams{
 		Price:     float32(newPrice) / 100,
 		ReleaseId: releaseId,
 		Condition: condition,
@@ -270,7 +292,7 @@ func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int
 func (p *prodClient) UpdateSaleState(ctx context.Context, saleId int64, releaseId int64, condition string, saleState pb.SaleStatus) error {
 	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
-	data := &SaleJson{
+	data := &SaleParams{
 		Status:    convertSaleStatus(saleState),
 		ReleaseId: releaseId,
 		Condition: condition,

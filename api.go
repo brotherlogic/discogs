@@ -6,20 +6,6 @@ import (
 	pb "github.com/brotherlogic/discogs/proto"
 )
 
-type SaleParams struct {
-	ReleaseId       int32
-	Condition       string
-	SleeveCondition string
-	Price           int32
-	Comments        string
-	AllowOffers     bool
-	Status          string
-	ExternalId      string
-	Location        string
-	Weight          int32
-	FormatQuantity  int32
-}
-
 type Discogs interface {
 	GetCallCount() int32
 
