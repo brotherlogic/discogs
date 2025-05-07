@@ -14,6 +14,7 @@ func TestCreateSale_Success(t *testing.T) {
 		ReleaseId: 27962688,
 		Condition: "Mint (M)",
 		Price:     10023,
+		Status:    "For Sale",
 	})
 
 	if err != nil {

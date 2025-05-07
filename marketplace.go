@@ -268,7 +268,7 @@ func (p *prodClient) CreateSale(ctx context.Context, params SaleParams) (int64, 
 func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error {
 	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
-	data := &SaleJson{
+	data := &SaleParams{
 		Price:     float32(newPrice) / 100,
 		ReleaseId: releaseId,
 		Condition: condition,
@@ -292,7 +292,7 @@ func (p *prodClient) UpdateSale(ctx context.Context, saleId int64, releaseId int
 func (p *prodClient) UpdateSaleState(ctx context.Context, saleId int64, releaseId int64, condition string, saleState pb.SaleStatus) error {
 	csURL := fmt.Sprintf("/marketplace/listings/%v", saleId)
 
-	data := &SaleJson{
+	data := &SaleParams{
 		Status:    convertSaleStatus(saleState),
 		ReleaseId: releaseId,
 		Condition: condition,
