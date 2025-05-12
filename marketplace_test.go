@@ -10,7 +10,7 @@ import (
 func TestCreateSale_Success(t *testing.T) {
 	td := GetTestDiscogs()
 
-	saleid, err := td.CreateSale(context.Background(), SaleParams{
+	saleid, err := td.CreateSale(context.Background(), &pb.SaleParams{
 		ReleaseId: 27962688,
 		Condition: "Mint (M)",
 		Price:     10023,

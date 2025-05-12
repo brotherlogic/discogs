@@ -76,7 +76,7 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 	return t.UserId
 }
 
-func (t *TestDiscogsClient) CreateSale(ctx context.Context, params SaleParams) (int64, error) {
+func (t *TestDiscogsClient) CreateSale(ctx context.Context, params *pb.SaleParams) (int64, error) {
 	t.callCount++
 	return 1234, nil
 }

@@ -69,6 +69,7 @@ message Release {
 message ReleaseStats {
     int32 median_price = 1;
     int32 low_price = 2;
+    int32 high_price = 3;
 }
 
 message Label {
@@ -113,4 +114,18 @@ message Want {
 message Order {
     string id = 1;
     string status = 2;
+}
+
+message SaleParams  {
+	int64 release_id = 1; 
+	string condition = 2; 
+	string sleeve_condition =3; 
+	float price = 4;
+	string comments = 5;
+	bool allow_offers     =6;
+	string status          =7;
+	string external_id      =8;
+	string location        =9;
+	int32 weight          =10;
+	 int32 format_quantity  = 11;
 }

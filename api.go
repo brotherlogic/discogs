@@ -30,7 +30,7 @@ type Discogs interface {
 	CreateFolder(ctx context.Context, folderName string) (*pb.Folder, error)
 	DeleteFolder(ctx context.Context, folderId int32) error
 
-	CreateSale(ctx context.Context, params SaleParams) (int64, error)
+	CreateSale(ctx context.Context, params *pb.SaleParams) (int64, error)
 	GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error)
 	UpdateSale(ctx context.Context, saleId int64, releaseId int64, condition string, newPrice int32) error
 	UpdateSaleState(ctx context.Context, saleId, releaseId int64, condition string, saleSate pb.SaleStatus) error
