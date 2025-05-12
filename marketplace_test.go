@@ -70,6 +70,10 @@ func TestGetReleaseStats(t *testing.T) {
 	if stats.GetLowPrice() != 922 {
 		t.Errorf("Wrong low price; should have been 922, was %v", stats.GetLowPrice())
 	}
+
+	if stats.GetHighPrice() != 2407 {
+		t.Errorf("Wrong low price; should have been 2407, was %v", stats.GetHighPrice())
+	}
 }
 
 func TestGetReleaseStats_CornerCase(t *testing.T) {

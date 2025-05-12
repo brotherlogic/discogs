@@ -124,6 +124,22 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 		rs.LowPrice = int32(num * 100)
 	}
 
+	results = regexp.MustCompile("High<!.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
+	if len(results) > 0 && len(results[0]) > 0 {
+		strvl := results[0][1]
+
+		// Release has no median price
+		if strvl == "--" {
+			return &pb.ReleaseStats{MedianPrice: 0}, nil
+		}
+
+		num, err := strconv.ParseFloat(strvl[1:], 16)
+		if err != nil {
+			return nil, err
+		}
+		rs.HighPrice = int32(num * 100)
+	}
+
 	return rs, nil
 }
 
