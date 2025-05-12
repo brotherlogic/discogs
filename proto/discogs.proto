@@ -115,3 +115,17 @@ message Order {
     string id = 1;
     string status = 2;
 }
+
+message SaleParams  {
+	int64 release_id = 1; 
+	string condition = 2; 
+	string sleeve_condition =3; 
+	float price = 4;
+	string comments = 5;
+	bool allow_offers     =6;
+	string status          =7;
+	string external_id      =8;
+	string location        =9;
+	int32 weight          =10;
+	 int32 format_quantity  = 11;
+}
