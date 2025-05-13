@@ -1,7 +1,11 @@
+mkdir -p marketplace/price_suggestions/
+curl "https://api.discogs.com/marketplace/price_suggestions/189766?token=$1" > marketplace/price_suggestions/189766
+exit
+
+
 mkdir -p releases/1671276/rating
 curl -X PUT -H "Content-Type:application/json" -d '{"rating":3}' --user-agent "GoDiscogsTestData" "https://api.discogs.com/releases/1671276/rating/BrotherLogic?token=$1" | sed "s/$1/token/g" > releases/1671276/rating/brotherlogic_5f3a611abe3a6aaa60721944add83b16
 exit
-
 
 mkdir -p users/brotherlogic/collection/releases/
 curl -X GET -H "Content-Type:application/json" --user-agent "GoDiscogsTestData" "https://api.discogs.com//users/brotherlogic/collection/releases/550078?token=$1"  | sed "s/$1/token/g" > users/brotherlogic/collection/releases/550078_page=1

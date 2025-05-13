@@ -26,6 +26,24 @@ func TestCreateSale_Success(t *testing.T) {
 	}
 }
 
+func TestGetSaleStats(t *testing.T) {
+	td := GetTestDiscogs()
+
+	stats, err := td.GetSaleStats(context.Background(), 189766)
+	if err != nil {
+		t.Fatalf("Bad get sale stats: %v", err)
+	}
+
+	if stats.GetVgPrice() < 16.98 || stats.GetVgPrice() > 16.99 {
+		t.Errorf("Bad vg price: %v -> 16.99", stats.GetVgPrice())
+	}
+
+	if stats.GetMPrice() < 35.86 || stats.GetMPrice() > 35.87 {
+		t.Errorf("Bad m price: %v -> 16.99", stats.GetMPrice())
+	}
+
+}
+
 func TestExpireSale(t *testing.T) {
 	td := GetTestDiscogs()
 

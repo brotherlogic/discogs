@@ -313,3 +313,39 @@ func (p *prodClient) UpdateSaleState(ctx context.Context, saleId int64, releaseI
 
 	return nil
 }
+
+type DiscogsPrice struct {
+	Currency string  `json:"currency"`
+	Value    float32 `json:"value"`
+}
+
+type SaleStatsResponse struct {
+	VG  DiscogsPrice `json:"Very Good (VG)"`
+	M   DiscogsPrice `json:"Mint (M)"`
+	NM  DiscogsPrice `json: "Near Mint (NM or M-)"`
+	VGP DiscogsPrice `json: "Very Good Plus (VG+)"`
+	GP  DiscogsPrice `json: "Good Plus (G+)"`
+	G   DiscogsPrice `json: "Good (G)"`
+	F   DiscogsPrice `json: "Fair (F)"`
+	P   DiscogsPrice `json: "Poor (P)"`
+}
+
+func (p *prodClient) GetSaleStats(ctx context.Context, releaseId int64) (*pb.SaleStats, error) {
+	csURL := fmt.Sprintf("/marketplace/price_suggestions/%v", releaseId)
+	ssr := &SaleStatsResponse{}
+	err := p.makeDiscogsRequest("GET", csURL, "", "/marketplace/price_suggestions/rid", ssr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.SaleStats{
+		VgPrice:     ssr.VG.Value,
+		MPrice:      ssr.M.Value,
+		NmPrice:     ssr.NM.Value,
+		VgplusPrice: ssr.VG.Value,
+		GplusPrice:  ssr.GP.Value,
+		GPrice:      ssr.G.Value,
+		FPrice:      ssr.F.Value,
+		PPrice:      ssr.P.Value,
+	}, nil
+}
