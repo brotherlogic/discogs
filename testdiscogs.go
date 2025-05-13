@@ -76,6 +76,11 @@ func (t *TestDiscogsClient) GetUserId() int32 {
 	return t.UserId
 }
 
+func (t *TestDiscogsClient) GetSaleStats(ctx context.Context, releaseId int64) (*pb.SaleStats, error) {
+	t.callCount++
+	return &pb.SaleStats{}, nil
+}
+
 func (t *TestDiscogsClient) CreateSale(ctx context.Context, params *pb.SaleParams) (int64, error) {
 	t.callCount++
 	return 1234, nil
