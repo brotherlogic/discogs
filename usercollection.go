@@ -196,7 +196,7 @@ func (d *prodClient) AddRelease(ctx context.Context, id, folder int64) (int64, e
 
 func (d *prodClient) GetCollection(ctx context.Context, page int32) ([]*pb.Release, *pb.Pagination, error) {
 	cr := &CollectionResponse{}
-	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v", d.user.GetUsername(), page), "", "/users/uname/collection/folders/0/releases", cr)
+	err := d.makeDiscogsRequest("GET", fmt.Sprintf("/users/%v/collection/folders/0/releases?page=%v&sort=added&sort_order=desc", d.user.GetUsername(), page), "", "/users/uname/collection/folders/0/releases", cr)
 	if err != nil {
 		return nil, nil, err
 	}
