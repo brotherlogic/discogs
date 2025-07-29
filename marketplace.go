@@ -98,7 +98,7 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 
 		// Release has no median price
 		if strvl == "--" {
-			return &pb.ReleaseStats{MedianPrice: 0}, nil
+			return nil, status.Errorf(codes.NotFound, "Release %v has no median price", releaseId)
 		}
 
 		num, err := strconv.ParseFloat(strvl[1:], 16)
@@ -114,7 +114,7 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 
 		// Release has no median price
 		if strvl == "--" {
-			return &pb.ReleaseStats{MedianPrice: 0}, nil
+			return nil, status.Errorf(codes.NotFound, "Release %v has no low price", releaseId)
 		}
 
 		num, err := strconv.ParseFloat(strvl[1:], 16)
@@ -130,7 +130,7 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 
 		// Release has no median price
 		if strvl == "--" {
-			return &pb.ReleaseStats{MedianPrice: 0}, nil
+			return nil, status.Errorf(codes.NotFound, "Release %v has no low price", releaseId)
 		}
 
 		num, err := strconv.ParseFloat(strvl[1:], 16)

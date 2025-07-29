@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	pb "github.com/brotherlogic/discogs/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestCreateSale_Success(t *testing.T) {
@@ -96,13 +98,9 @@ func TestGetReleaseStats(t *testing.T) {
 
 func TestGetReleaseStats_CornerCase(t *testing.T) {
 	td := GetTestDiscogs()
-	stats, err := td.GetReleaseStats(context.Background(), 28154152)
-	if err != nil {
+	_, err := td.GetReleaseStats(context.Background(), 28154152)
+	if err == nil || status.Code(err) != codes.NotFound {
 		t.Fatalf("bad get: %v", err)
-	}
-
-	if stats.GetMedianPrice() != 0 {
-		t.Errorf("Wrong median price should have been 0, was %v", stats.GetMedianPrice())
 	}
 }
 
