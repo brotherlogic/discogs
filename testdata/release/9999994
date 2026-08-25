@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head><title>Legacy Span Test Release</title></head>
+<body>
+<div>
+<ul>
+<li><span>Low<!-- -->:</span><span>$4.50</span></li>
+<li><span>Median<!-- -->:</span><span>$12.00</span></li>
+<li><span>High<!-- -->:</span><span>$25.50</span></li>
+</ul>
+</div>
+</body>
+</html>
