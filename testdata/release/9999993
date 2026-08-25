@@ -1,0 +1,7 @@
+<!doctype html>
+<html>
+<head><title>Next.js Test Release</title></head>
+<body>
+<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"release":{"discogsId":9999993,"statistics":{"min":{"amount":10.50,"currency":"USD"},"median":{"amount":20.00,"currency":"USD"},"max":{"amount":35.25,"currency":"USD"}}}}}}</script>
+</body>
+</html>

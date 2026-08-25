@@ -1,0 +1,9 @@
+<!doctype html>
+<html>
+<head>
+    <title>Single Sale Test Release</title>
+</head>
+<body>
+    <script id="dsdata" type="application/json">{"config":{},"data":{"ROOT_QUERY":{},"Release:{\"discogsId\":9999991}":{"discogsId":9999991,"title":"Single Sale Release","statistics":{"__typename":"ReleaseStatisticsConnection","lastSaleDate":"2023-05-12T10:00:00-07:00","min":{"__typename":"Price","amount":15.00,"currency":"USD","converted({\"toCurrency\":\"USD\"})":{"__typename":"Price","amount":15.00,"currency":"USD"}},"median":{"__typename":"Price","amount":15.00,"currency":"USD","converted({\"toCurrency\":\"USD\"})":{"__typename":"Price","amount":15.00,"currency":"USD"}},"max":{"__typename":"Price","amount":15.00,"currency":"USD","converted({\"toCurrency\":\"USD\"})":{"__typename":"Price","amount":15.00,"currency":"USD"}}}}}}</script>
+</body>
+</html>
