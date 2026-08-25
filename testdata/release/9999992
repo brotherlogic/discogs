@@ -1,0 +1,9 @@
+<!doctype html>
+<html>
+<head>
+    <title>Malformed HTML Release</title>
+</head>
+<body>
+    <div>No structured data script tag here</div>
+</body>
+</html>

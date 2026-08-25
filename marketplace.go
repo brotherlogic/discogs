@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"regexp"
 	"strconv"
+	"strings"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"google.golang.org/grpc/codes"
@@ -82,6 +84,80 @@ type strpass struct {
 	Value string
 }
 
+type dsPrice struct {
+	Amount   float64 `json:"amount"`
+	Value    float64 `json:"value"`
+	Currency string  `json:"currency"`
+}
+
+type dsStats struct {
+	Min    *dsPrice `json:"min"`
+	Median *dsPrice `json:"median"`
+	Max    *dsPrice `json:"max"`
+	Low    *dsPrice `json:"low"`
+	High   *dsPrice `json:"high"`
+}
+
+type dsReleaseData struct {
+	DiscogsId                  int64    `json:"discogsId"`
+	Statistics                 *dsStats `json:"statistics"`
+	MarketplacePriceStatistics *struct {
+		SalesHistory *dsStats `json:"salesHistory"`
+	} `json:"marketplacePriceStatistics"`
+}
+
+func extractPriceCents(p *dsPrice) int32 {
+	if p == nil {
+		return 0
+	}
+	val := p.Amount
+	if val == 0 {
+		val = p.Value
+	}
+	if val <= 0 {
+		return 0
+	}
+	return int32(math.Round(val * 100))
+}
+
+func parseStatsFromJSON(stats *dsStats, releaseId int64) (*pb.ReleaseStats, error) {
+	if stats == nil {
+		return nil, status.Errorf(codes.NotFound, "Release %v has no sales price statistics", releaseId)
+	}
+
+	low := extractPriceCents(stats.Min)
+	if low == 0 {
+		low = extractPriceCents(stats.Low)
+	}
+
+	median := extractPriceCents(stats.Median)
+
+	high := extractPriceCents(stats.Max)
+	if high == 0 {
+		high = extractPriceCents(stats.High)
+	}
+
+	if low == 0 && median == 0 && high == 0 {
+		return nil, status.Errorf(codes.NotFound, "Release %v has no sales price statistics", releaseId)
+	}
+
+	if low == 0 && median > 0 {
+		low = median
+	}
+	if high == 0 && median > 0 {
+		high = median
+	}
+	if median == 0 && low > 0 && high > 0 {
+		median = int32(math.Round(float64(low+high) / 2.0))
+	}
+
+	return &pb.ReleaseStats{
+		LowPrice:    low,
+		MedianPrice: median,
+		HighPrice:   high,
+	}, nil
+}
+
 func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error) {
 	url := fmt.Sprintf("https://www.discogs.com/release/%v", releaseId)
 	str := &strpass{}
@@ -90,58 +166,119 @@ func (p *prodClient) GetReleaseStats(ctx context.Context, releaseId int64) (*pb.
 		return nil, err
 	}
 
+	// 1. Try parsing from <script id="dsdata" ...>
+	dsMatch := regexp.MustCompile(`<script id="dsdata"[^>]*>(.*?)</script>`).FindStringSubmatch(str.Value)
+	if len(dsMatch) > 1 {
+		var dsPayload struct {
+			Data map[string]json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal([]byte(dsMatch[1]), &dsPayload); err == nil && dsPayload.Data != nil {
+			targetKey := fmt.Sprintf("Release:{\"discogsId\":%v}", releaseId)
+			var rawRel json.RawMessage
+			if val, ok := dsPayload.Data[targetKey]; ok {
+				rawRel = val
+			} else {
+				for k, v := range dsPayload.Data {
+					if strings.HasPrefix(k, "Release:") {
+						rawRel = v
+						break
+					}
+				}
+			}
+
+			if rawRel != nil {
+				var relData dsReleaseData
+				if err := json.Unmarshal(rawRel, &relData); err == nil {
+					stats := relData.Statistics
+					if stats == nil && relData.MarketplacePriceStatistics != nil {
+						stats = relData.MarketplacePriceStatistics.SalesHistory
+					}
+					return parseStatsFromJSON(stats, releaseId)
+				}
+			}
+		}
+	}
+
+	// 2. Try parsing from <script id="__NEXT_DATA__" ...>
+	nextMatch := regexp.MustCompile(`<script id="__NEXT_DATA__"[^>]*>(.*?)</script>`).FindStringSubmatch(str.Value)
+	if len(nextMatch) > 1 {
+		var nextPayload struct {
+			Props struct {
+				PageProps struct {
+					Release *dsReleaseData `json:"release"`
+					Stats   *dsStats       `json:"statistics"`
+				} `json:"pageProps"`
+			} `json:"props"`
+		}
+		if err := json.Unmarshal([]byte(nextMatch[1]), &nextPayload); err == nil {
+			if nextPayload.Props.PageProps.Release != nil {
+				stats := nextPayload.Props.PageProps.Release.Statistics
+				if stats == nil && nextPayload.Props.PageProps.Release.MarketplacePriceStatistics != nil {
+					stats = nextPayload.Props.PageProps.Release.MarketplacePriceStatistics.SalesHistory
+				}
+				if stats != nil {
+					return parseStatsFromJSON(stats, releaseId)
+				}
+			}
+			if nextPayload.Props.PageProps.Stats != nil {
+				return parseStatsFromJSON(nextPayload.Props.PageProps.Stats, releaseId)
+			}
+		}
+	}
+
+	// 3. Fallback to legacy regex HTML scraping
 	rs := &pb.ReleaseStats{}
+	foundAny := false
 
 	results := regexp.MustCompile("Median<!.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
 	if len(results) > 0 && len(results[0]) > 0 {
 		strvl := results[0][1]
-
-		// Release has no median price
 		if strvl == "--" {
 			return nil, status.Errorf(codes.NotFound, "Release %v has no median price", releaseId)
 		}
-
-		num, err := strconv.ParseFloat(strvl[1:], 16)
+		num, err := strconv.ParseFloat(strvl[1:], 64)
 		if err != nil {
 			return nil, err
 		}
-		rs.MedianPrice = int32(num * 100)
+		rs.MedianPrice = int32(math.Round(num * 100))
+		foundAny = true
 	}
 
 	results = regexp.MustCompile("Low<!.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
 	if len(results) > 0 && len(results[0]) > 0 {
 		strvl := results[0][1]
-
-		// Release has no median price
 		if strvl == "--" {
 			return nil, status.Errorf(codes.NotFound, "Release %v has no low price", releaseId)
 		}
-
-		num, err := strconv.ParseFloat(strvl[1:], 16)
+		num, err := strconv.ParseFloat(strvl[1:], 64)
 		if err != nil {
 			return nil, err
 		}
-		rs.LowPrice = int32(num * 100)
+		rs.LowPrice = int32(math.Round(num * 100))
+		foundAny = true
 	}
 
 	results = regexp.MustCompile("High<!.*?span.*?span>(.*?)<").FindAllStringSubmatch(str.Value, 1)
 	if len(results) > 0 && len(results[0]) > 0 {
 		strvl := results[0][1]
-
-		// Release has no median price
 		if strvl == "--" {
-			return nil, status.Errorf(codes.NotFound, "Release %v has no low price", releaseId)
+			return nil, status.Errorf(codes.NotFound, "Release %v has no high price", releaseId)
 		}
-
-		num, err := strconv.ParseFloat(strvl[1:], 16)
+		num, err := strconv.ParseFloat(strvl[1:], 64)
 		if err != nil {
 			return nil, err
 		}
-		rs.HighPrice = int32(num * 100)
+		rs.HighPrice = int32(math.Round(num * 100))
+		foundAny = true
+	}
+
+	if !foundAny {
+		return nil, status.Errorf(codes.NotFound, "Release %v has no sales price statistics", releaseId)
 	}
 
 	return rs, nil
 }
+
 
 func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error) {
 	cr := &InventoryResponse{}

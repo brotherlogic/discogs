@@ -116,6 +116,51 @@ func TestGetReleaseStats_CornerCase2(t *testing.T) {
 	}
 }
 
+func TestGetReleaseStats_Validation4243427(t *testing.T) {
+	td := GetTestDiscogs()
+	stats, err := td.GetReleaseStats(context.Background(), 4243427)
+	if err != nil {
+		t.Fatalf("Failed to get release stats for 4243427: %v", err)
+	}
+
+	if stats.GetLowPrice() != 581 {
+		t.Errorf("Wrong low price: expected 581, got %v", stats.GetLowPrice())
+	}
+	if stats.GetMedianPrice() != 1855 {
+		t.Errorf("Wrong median price: expected 1855, got %v", stats.GetMedianPrice())
+	}
+	if stats.GetHighPrice() != 3082 {
+		t.Errorf("Wrong high price: expected 3082, got %v", stats.GetHighPrice())
+	}
+}
+
+func TestGetReleaseStats_SingleSale(t *testing.T) {
+	td := GetTestDiscogs()
+	stats, err := td.GetReleaseStats(context.Background(), 9999991)
+	if err != nil {
+		t.Fatalf("Failed to get single sale release stats: %v", err)
+	}
+
+	if stats.GetLowPrice() != 1500 {
+		t.Errorf("Wrong low price: expected 1500, got %v", stats.GetLowPrice())
+	}
+	if stats.GetMedianPrice() != 1500 {
+		t.Errorf("Wrong median price: expected 1500, got %v", stats.GetMedianPrice())
+	}
+	if stats.GetHighPrice() != 1500 {
+		t.Errorf("Wrong high price: expected 1500, got %v", stats.GetHighPrice())
+	}
+}
+
+func TestGetReleaseStats_Malformed(t *testing.T) {
+	td := GetTestDiscogs()
+	_, err := td.GetReleaseStats(context.Background(), 9999992)
+	if err == nil {
+		t.Fatalf("Expected error for malformed release HTML without statistics, got nil")
+	}
+}
+
+
 func TestListSales_Success(t *testing.T) {
 	td := GetTestDiscogs()
 
