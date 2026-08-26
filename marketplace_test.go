@@ -134,6 +134,25 @@ func TestGetReleaseStats_Validation4243427(t *testing.T) {
 	}
 }
 
+func TestGetReleaseStats_Validation556184(t *testing.T) {
+	td := GetTestDiscogs()
+	stats, err := td.GetReleaseStats(context.Background(), 556184)
+	if err != nil {
+		t.Fatalf("Failed to get release stats for 556184: %v", err)
+	}
+
+	if stats.GetLowPrice() != 698 {
+		t.Errorf("Wrong low price: expected 698, got %v", stats.GetLowPrice())
+	}
+	if stats.GetMedianPrice() != 1369 {
+		t.Errorf("Wrong median price: expected 1369, got %v", stats.GetMedianPrice())
+	}
+	if stats.GetHighPrice() != 9000 {
+		t.Errorf("Wrong high price: expected 9000, got %v", stats.GetHighPrice())
+	}
+}
+
+
 func TestGetReleaseStats_SingleSale(t *testing.T) {
 	td := GetTestDiscogs()
 	stats, err := td.GetReleaseStats(context.Background(), 9999991)
