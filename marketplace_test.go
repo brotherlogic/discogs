@@ -224,17 +224,21 @@ func TestGetReleaseStats_LegacyUnsold(t *testing.T) {
 }
 
 
-func TestListSales_Success(t *testing.T) {
+func TestListSales_PerPage100(t *testing.T) {
 	td := GetTestDiscogs()
 
 	sales, pagination, err := td.ListSales(context.Background(), 1)
 
 	if err != nil {
-		t.Fatalf("Bad list sales: %v", err)
+		t.Fatalf("Failed to list sales: %v", err)
 	}
 
 	if len(sales) != 50 {
 		t.Errorf("Bad sale return %v -> %v", sales, pagination)
+	}
+
+	if pagination.GetPage() != 1 || pagination.GetPages() != 35 {
+		t.Errorf("Bad pagination return: %v", pagination)
 	}
 
 	for _, sale := range sales {

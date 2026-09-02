@@ -284,7 +284,7 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 	cr := &InventoryResponse{}
 	err := p.makeDiscogsRequest(
 		"GET",
-		fmt.Sprintf("/users/%v/inventory?page=%v", p.user.GetUsername(), page),
+		fmt.Sprintf("/users/%v/inventory?page=%d&per_page=100", p.user.GetUsername(), page),
 		"",
 		"/users/uname/inventory",
 		cr,
