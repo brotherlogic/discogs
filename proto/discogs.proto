@@ -111,9 +111,21 @@ message Want {
     repeated Artist artists = 3;
 }
 
+message OrderItem {
+    int64 id = 1;
+    int64 release_id = 2;
+    Price price = 3;
+    string condition = 4;
+    string sleeve_condition = 5;
+}
+
 message Order {
     string id = 1;
     string status = 2;
+    int64 created = 3;
+    repeated OrderItem items = 4;
+    Price total = 5;
+    int64 last_activity = 6;
 }
 
 message SaleParams  {
