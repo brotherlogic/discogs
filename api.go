@@ -2,6 +2,7 @@ package discogs
 
 import (
 	"context"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 )
@@ -36,6 +37,7 @@ type Discogs interface {
 	UpdateSaleState(ctx context.Context, saleId, releaseId int64, condition string, saleSate pb.SaleStatus) error
 	ListSales(ctx context.Context, page int32) ([]*pb.SaleItem, *pb.Pagination, error)
 	GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
+	ListOrders(ctx context.Context, createdAfter time.Time, page int32) ([]*pb.Order, *pb.Pagination, error)
 
 	GetSaleStats(ctx context.Context, releaseId int64) (*pb.SaleStats, error)
 	GetReleaseStats(ctx context.Context, releaseId int64) (*pb.ReleaseStats, error)

@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"google.golang.org/grpc/codes"
@@ -307,22 +308,70 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 	return listings, &pb.Pagination{Page: int32(cr.Pagination.Page), Pages: int32(cr.Pagination.Pages)}, nil
 }
 
-type OrderItem struct {
-	Release Release
-	Price   Price
-	Id      int64
+type OrderItemResponse struct {
+	Id              int64   `json:"id"`
+	Release         Release `json:"release"`
+	Price           Price   `json:"price"`
+	MediaCondition  string  `json:"media_condition"`
+	Condition       string  `json:"condition"`
+	SleeveCondition string  `json:"sleeve_condition"`
 }
 
-type Order struct {
-	Id     string
-	Status string
-	Items  []OrderItem
+type OrderResponse struct {
+	Id           string              `json:"id"`
+	Status       string              `json:"status"`
+	Created      string              `json:"created"`
+	LastActivity string              `json:"last_activity"`
+	Total        Price               `json:"total"`
+	Items        []OrderItemResponse `json:"items"`
+}
+
+type OrdersResponse struct {
+	Pagination Pagination      `json:"pagination"`
+	Orders     []OrderResponse `json:"orders"`
+}
+
+func parseTime(tstr string) int64 {
+	if tstr == "" {
+		return 0
+	}
+	t, err := time.Parse(time.RFC3339, tstr)
+	if err != nil {
+		return 0
+	}
+	return t.Unix()
+}
+
+func convertOrder(o *OrderResponse) *pb.Order {
+	var items []*pb.OrderItem
+	for _, item := range o.Items {
+		cond := item.MediaCondition
+		if cond == "" {
+			cond = item.Condition
+		}
+		items = append(items, &pb.OrderItem{
+			Id:              item.Id,
+			ReleaseId:       item.Release.Id,
+			Price:           convertPrice(item.Price),
+			Condition:       cond,
+			SleeveCondition: item.SleeveCondition,
+		})
+	}
+
+	return &pb.Order{
+		Id:           o.Id,
+		Status:       o.Status,
+		Created:      parseTime(o.Created),
+		LastActivity: parseTime(o.LastActivity),
+		Total:        convertPrice(o.Total),
+		Items:        items,
+	}
 }
 
 func (p *prodClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, error) {
 	gsURL := fmt.Sprintf("/marketplace/orders/%v", orderId)
 
-	gsr := &Order{}
+	gsr := &OrderResponse{}
 	err := p.makeDiscogsRequest(
 		"GET",
 		gsURL,
@@ -335,10 +384,35 @@ func (p *prodClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, e
 		return nil, err
 	}
 
-	return &pb.Order{
-		Id:     gsr.Id,
-		Status: gsr.Status,
-	}, nil
+	return convertOrder(gsr), nil
+}
+
+func (p *prodClient) ListOrders(ctx context.Context, createdAfter time.Time, page int32) ([]*pb.Order, *pb.Pagination, error) {
+	var endpoint string
+	if !createdAfter.IsZero() {
+		endpoint = fmt.Sprintf("/marketplace/orders?created_after=%v&page=%d&per_page=100&sort=created&sort_order=desc", createdAfter.UTC().Format(time.RFC3339), page)
+	} else {
+		endpoint = fmt.Sprintf("/marketplace/orders?page=%d&per_page=100&sort=created&sort_order=desc", page)
+	}
+
+	resp := &OrdersResponse{}
+	err := p.makeDiscogsRequest(
+		"GET",
+		endpoint,
+		"",
+		"/marketplace/orders",
+		resp,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var orders []*pb.Order
+	for _, o := range resp.Orders {
+		orders = append(orders, convertOrder(&o))
+	}
+
+	return orders, &pb.Pagination{Page: int32(resp.Pagination.Page), Pages: int32(resp.Pagination.Pages)}, nil
 }
 
 func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, error) {
