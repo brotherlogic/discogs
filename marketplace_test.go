@@ -3,6 +3,7 @@ package discogs
 import (
 	"context"
 	"testing"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"google.golang.org/grpc/codes"
@@ -271,5 +272,123 @@ func TestUpdateSale_Success(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("Bad list sales: %v", err)
+	}
+}
+
+func TestListOrders_Parsing(t *testing.T) {
+	td := GetTestDiscogs()
+
+	orders, pagination, err := td.ListOrders(context.Background(), time.Time{}, 1)
+	if err != nil {
+		t.Fatalf("Failed to list orders: %v", err)
+	}
+
+	if pagination.GetPage() != 1 || pagination.GetPages() != 3 {
+		t.Errorf("Bad pagination: got page=%v, pages=%v; expected 1 and 3", pagination.GetPage(), pagination.GetPages())
+	}
+
+	if len(orders) != 2 {
+		t.Fatalf("Expected 2 orders, got %d", len(orders))
+	}
+
+	// First order
+	o1 := orders[0]
+	if o1.GetId() != "150295-1254" || o1.GetStatus() != "Shipped" {
+		t.Errorf("Unexpected order 1 metadata: %+v", o1)
+	}
+	expectedCreated1, _ := time.Parse(time.RFC3339, "2023-08-19T05:25:38-07:00")
+	if o1.GetCreated() != expectedCreated1.Unix() {
+		t.Errorf("Expected created unix %v, got %v", expectedCreated1.Unix(), o1.GetCreated())
+	}
+	expectedLastActivity1, _ := time.Parse(time.RFC3339, "2023-08-25T20:05:05-07:00")
+	if o1.GetLastActivity() != expectedLastActivity1.Unix() {
+		t.Errorf("Expected last_activity unix %v, got %v", expectedLastActivity1.Unix(), o1.GetLastActivity())
+	}
+	if o1.GetTotal().GetValue() != 1555 || o1.GetTotal().GetCurrency() != "USD" {
+		t.Errorf("Expected total 1555 USD, got %+v", o1.GetTotal())
+	}
+	if len(o1.GetItems()) != 1 {
+		t.Fatalf("Expected 1 item in order 1, got %d", len(o1.GetItems()))
+	}
+	item1 := o1.GetItems()[0]
+	if item1.GetId() != 2565159678 || item1.GetReleaseId() != 8419904 || item1.GetCondition() != "Very Good Plus (VG+)" || item1.GetSleeveCondition() != "Very Good Plus (VG+)" {
+		t.Errorf("Unexpected item 1: %+v", item1)
+	}
+	if item1.GetPrice().GetValue() != 1555 || item1.GetPrice().GetCurrency() != "USD" {
+		t.Errorf("Expected item price 1555 USD, got %+v", item1.GetPrice())
+	}
+
+	// Second order
+	o2 := orders[1]
+	if o2.GetId() != "150295-1255" || o2.GetStatus() != "Payment Received" {
+		t.Errorf("Unexpected order 2 metadata: %+v", o2)
+	}
+	expectedCreated2, _ := time.Parse(time.RFC3339, "2023-08-20T10:00:00Z")
+	if o2.GetCreated() != expectedCreated2.Unix() {
+		t.Errorf("Expected created unix %v, got %v", expectedCreated2.Unix(), o2.GetCreated())
+	}
+	if o2.GetTotal().GetValue() != 3000 || o2.GetTotal().GetCurrency() != "EUR" {
+		t.Errorf("Expected total 3000 EUR, got %+v", o2.GetTotal())
+	}
+	if len(o2.GetItems()) != 1 {
+		t.Fatalf("Expected 1 item in order 2, got %d", len(o2.GetItems()))
+	}
+	item2 := o2.GetItems()[0]
+	if item2.GetId() != 2565159679 || item2.GetReleaseId() != 123456 || item2.GetCondition() != "Near Mint (NM or M-)" || item2.GetSleeveCondition() != "Generic" {
+		t.Errorf("Unexpected item 2: %+v", item2)
+	}
+	if item2.GetPrice().GetValue() != 3000 || item2.GetPrice().GetCurrency() != "EUR" {
+		t.Errorf("Expected item price 3000 EUR, got %+v", item2.GetPrice())
+	}
+}
+
+func TestListOrders_CreatedAfterFormatting(t *testing.T) {
+	td := GetTestDiscogs()
+
+	// With createdAfter set
+	createdAfter := time.Date(2023, 8, 1, 0, 0, 0, 0, time.UTC)
+	orders, pagination, err := td.ListOrders(context.Background(), createdAfter, 1)
+	if err != nil {
+		t.Fatalf("Failed to list orders with created_after: %v", err)
+	}
+	if len(orders) != 1 || orders[0].GetId() != "150295-1255" {
+		t.Errorf("Expected 1 order with id 150295-1255, got %+v", orders)
+	}
+	if pagination.GetPage() != 1 || pagination.GetPages() != 1 {
+		t.Errorf("Unexpected pagination: %+v", pagination)
+	}
+
+	// Without createdAfter (zero time)
+	ordersZero, paginationZero, err := td.ListOrders(context.Background(), time.Time{}, 1)
+	if err != nil {
+		t.Fatalf("Failed to list orders with zero time: %v", err)
+	}
+	if len(ordersZero) != 2 {
+		t.Errorf("Expected 2 orders with zero time, got %d", len(ordersZero))
+	}
+	if paginationZero.GetPage() != 1 || paginationZero.GetPages() != 3 {
+		t.Errorf("Unexpected pagination with zero time: %+v", paginationZero)
+	}
+}
+
+func TestListOrders_EmptyAndError(t *testing.T) {
+	td := GetTestDiscogs()
+
+	// Empty orders
+	orders, pagination, err := td.ListOrders(context.Background(), time.Time{}, 99)
+	if err != nil {
+		t.Fatalf("Failed to list orders on empty page: %v", err)
+	}
+	if len(orders) != 0 {
+		t.Errorf("Expected 0 orders on page 99, got %d", len(orders))
+	}
+	if pagination.GetPage() != 99 || pagination.GetPages() != 3 {
+		t.Errorf("Unexpected pagination on page 99: %+v", pagination)
+	}
+
+	// Error case - invalid/unmocked page that causes error
+	_, _, err = td.ListOrders(context.Background(), time.Time{}, 555)
+	if err == nil {
+		t.Fatalf("Expected error when requesting non-existent fixture, got nil")
 	}
 }

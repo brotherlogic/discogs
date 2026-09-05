@@ -3,6 +3,7 @@ package discogs
 import (
 	"context"
 	"log"
+	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
 	"golang.org/x/exp/maps"
@@ -17,6 +18,7 @@ type TestDiscogsClient struct {
 	Fields               []*pb.Field
 	Folders              []*pb.Folder
 	Sales                []*pb.SaleItem
+	Orders               []*pb.Order
 	Rating               map[int64]int32
 	Wants                map[int64]*pb.Want
 	Masters              map[int64]*pb.Release
@@ -102,6 +104,11 @@ func (t *TestDiscogsClient) DeleteFolder(ctx context.Context, folderId int32) er
 func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.Order, error) {
 	t.callCount++
 	return &pb.Order{}, nil
+}
+
+func (t *TestDiscogsClient) ListOrders(ctx context.Context, createdAfter time.Time, page int32) ([]*pb.Order, *pb.Pagination, error) {
+	t.callCount++
+	return t.Orders, &pb.Pagination{}, nil
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
