@@ -3,6 +3,7 @@ package discogs
 import (
 	"context"
 	"log"
+	"math"
 	"time"
 
 	pb "github.com/brotherlogic/discogs/proto"
@@ -106,9 +107,35 @@ func (t *TestDiscogsClient) GetOrder(ctx context.Context, orderId string) (*pb.O
 	return &pb.Order{}, nil
 }
 
+func (t *TestDiscogsClient) AddOrder(order *pb.Order) {
+	t.Orders = append(t.Orders, order)
+}
+
 func (t *TestDiscogsClient) ListOrders(ctx context.Context, createdAfter time.Time, page int32) ([]*pb.Order, *pb.Pagination, error) {
 	t.callCount++
-	return t.Orders, &pb.Pagination{}, nil
+	var filtered []*pb.Order
+	for _, order := range t.Orders {
+		if createdAfter.IsZero() || order.GetCreated() >= createdAfter.Unix() {
+			filtered = append(filtered, order)
+		}
+	}
+
+	totalPages := int32(math.Ceil(float64(len(filtered)) / 100.0))
+	if page <= 0 {
+		page = 1
+	}
+
+	start := int((page - 1) * 100)
+	if start >= len(filtered) {
+		return []*pb.Order{}, &pb.Pagination{Page: page, Pages: totalPages}, nil
+	}
+
+	end := start + 100
+	if end > len(filtered) {
+		end = len(filtered)
+	}
+
+	return filtered[start:end], &pb.Pagination{Page: page, Pages: totalPages}, nil
 }
 
 func (t *TestDiscogsClient) AddWant(ctx context.Context, releaseId int64) (*pb.Want, error) {
