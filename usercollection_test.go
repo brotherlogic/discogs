@@ -66,7 +66,7 @@ func (t *tClient) Do(req *http.Request) (*http.Response, error) {
 
 func (t *tClient) Get(url string) (*http.Response, error) {
 	response := &http.Response{}
-	testFile := strings.Replace(strings.Replace(url[23:], "?", "_", -1), "&", "_", -1)
+	testFile := strings.Replace(strings.Replace(strings.Replace(url[23:], "?", "_", -1), "&", "_", -1), ":", "_", -1)
 
 	stat, err := os.Stat("testdata" + testFile)
 	if err != nil {
