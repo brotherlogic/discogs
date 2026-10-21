@@ -2,7 +2,66 @@ package proto
 
 import (
 	"testing"
+
+	"google.golang.org/protobuf/proto"
 )
+
+func TestSaleItemProto(t *testing.T) {
+	var nilSaleItem *SaleItem
+	if nilSaleItem.GetSaleId() != 0 || nilSaleItem.GetStatus() != SaleStatus_UNKNOWN || nilSaleItem.GetPrice() != nil || nilSaleItem.GetReleaseId() != 0 || nilSaleItem.GetCondition() != "" || nilSaleItem.GetPosted() != 0 {
+		t.Errorf("nil SaleItem getter returned unexpected non-zero value")
+	}
+
+	postedNano := int64(1465079412000000000)
+	item := &SaleItem{
+		SaleId:    4396720221,
+		Status:    SaleStatus_FOR_SALE,
+		Price:     &Price{Currency: "USD", Value: 1999},
+		ReleaseId: 556184,
+		Condition: "Near Mint (NM or M-)",
+		Posted:    postedNano,
+	}
+
+	if item.GetPosted() != postedNano {
+		t.Errorf("Expected posted %d, got %d", postedNano, item.GetPosted())
+	}
+
+	data, err := proto.Marshal(item)
+	if err != nil {
+		t.Fatalf("Failed to marshal SaleItem: %v", err)
+	}
+
+	roundTrip := &SaleItem{}
+	if err := proto.Unmarshal(data, roundTrip); err != nil {
+		t.Fatalf("Failed to unmarshal SaleItem: %v", err)
+	}
+
+	if roundTrip.GetSaleId() != 4396720221 {
+		t.Errorf("Expected sale_id 4396720221, got %d", roundTrip.GetSaleId())
+	}
+	if roundTrip.GetStatus() != SaleStatus_FOR_SALE {
+		t.Errorf("Expected status FOR_SALE, got %v", roundTrip.GetStatus())
+	}
+	if roundTrip.GetPrice().GetCurrency() != "USD" || roundTrip.GetPrice().GetValue() != 1999 {
+		t.Errorf("Unexpected price after round-trip: %+v", roundTrip.GetPrice())
+	}
+	if roundTrip.GetReleaseId() != 556184 {
+		t.Errorf("Expected release_id 556184, got %d", roundTrip.GetReleaseId())
+	}
+	if roundTrip.GetCondition() != "Near Mint (NM or M-)" {
+		t.Errorf("Expected condition Near Mint (NM or M-), got %q", roundTrip.GetCondition())
+	}
+	if roundTrip.GetPosted() != postedNano {
+		t.Errorf("Expected posted %d after round-trip, got %d", postedNano, roundTrip.GetPosted())
+	}
+
+	_, _ = roundTrip.Descriptor()
+	roundTrip.ProtoMessage()
+	roundTrip.Reset()
+	if roundTrip.GetPosted() != 0 {
+		t.Errorf("Reset failed to clear Posted field")
+	}
+}
 
 func TestOrderProto(t *testing.T) {
 	var nilOrder *Order
@@ -222,12 +281,13 @@ func TestAllProtosCoverage(t *testing.T) {
 	_ = nilPr.GetValue()
 	pr.Reset()
 
-	si := &SaleItem{SaleId: 1, Status: SaleStatus_FOR_SALE, Price: pr, ReleaseId: 2, Condition: "VG+"}
+	si := &SaleItem{SaleId: 1, Status: SaleStatus_FOR_SALE, Price: pr, ReleaseId: 2, Condition: "VG+", Posted: 123456789}
 	_ = si.GetSaleId()
 	_ = si.GetStatus()
 	_ = si.GetPrice()
 	_ = si.GetReleaseId()
 	_ = si.GetCondition()
+	_ = si.GetPosted()
 	_ = si.String()
 	_ = si.ProtoReflect()
 	var nilSi *SaleItem
@@ -236,6 +296,7 @@ func TestAllProtosCoverage(t *testing.T) {
 	_ = nilSi.GetPrice()
 	_ = nilSi.GetReleaseId()
 	_ = nilSi.GetCondition()
+	_ = nilSi.GetPosted()
 	si.Reset()
 
 	art := &Artist{Name: "Artist", Id: 1}
