@@ -98,6 +98,7 @@ message SaleItem {
     Price price = 3;
     int64 release_id = 4;
     string condition = 5;
+    int64 posted = 6;
 }
 
 message Artist {
