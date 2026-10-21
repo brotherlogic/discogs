@@ -75,6 +75,11 @@ func TestGetSale_Success(t *testing.T) {
 	if sale.GetCondition() != "Mint (M)" {
 		t.Errorf("Bad sale condition: %v", sale.GetCondition())
 	}
+
+	expectedPosted, _ := time.Parse(time.RFC3339, "2023-08-29T17:23:17-07:00")
+	if sale.GetPosted() != expectedPosted.UnixNano() {
+		t.Errorf("Bad sale posted timestamp: expected %v, got %v", expectedPosted.UnixNano(), sale.GetPosted())
+	}
 }
 
 func TestGetReleaseStats(t *testing.T) {
@@ -242,12 +247,32 @@ func TestListSales_PerPage100(t *testing.T) {
 		t.Errorf("Bad pagination return: %v", pagination)
 	}
 
+	expectedPosted, _ := time.Parse(time.RFC3339, "2018-08-15T16:53:12-07:00")
 	for _, sale := range sales {
 		if sale.GetReleaseId() == 9624074 {
-			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 || sale.GetCondition() != "Very Good Plus (VG+)" {
+			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 || sale.GetCondition() != "Very Good Plus (VG+)" || sale.GetPosted() != expectedPosted.UnixNano() {
 				t.Errorf("No sale id returned: %v", sale)
 			}
 		}
+	}
+}
+
+func TestParseTimeNano(t *testing.T) {
+	validStr := "2023-08-29T17:23:17-07:00"
+	expected, err := time.Parse(time.RFC3339, validStr)
+	if err != nil {
+		t.Fatalf("Failed to parse valid time in test: %v", err)
+	}
+	if got := parseTimeNano(validStr); got != expected.UnixNano() {
+		t.Errorf("parseTimeNano(%q) = %v, want %v", validStr, got, expected.UnixNano())
+	}
+
+	if got := parseTimeNano(""); got != 0 {
+		t.Errorf("parseTimeNano(\"\") = %v, want 0", got)
+	}
+
+	if got := parseTimeNano("not-a-valid-timestamp"); got != 0 {
+		t.Errorf("parseTimeNano(\"not-a-valid-timestamp\") = %v, want 0", got)
 	}
 }
 

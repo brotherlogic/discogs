@@ -31,6 +31,7 @@ type GetSaleResponse struct {
 	Release   Release
 	Price     Price
 	Condition string
+	Posted    string `json:"posted"`
 }
 
 type Release struct {
@@ -285,7 +286,7 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 	cr := &InventoryResponse{}
 	err := p.makeDiscogsRequest(
 		"GET",
-		fmt.Sprintf("/users/%v/inventory?page=%d&per_page=100", p.user.GetUsername(), page),
+		fmt.Sprintf("/users/%v/inventory?page=%d&per_page=100&sort=listed&sort_order=desc", p.user.GetUsername(), page),
 		"",
 		"/users/uname/inventory",
 		cr,
@@ -302,6 +303,7 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 			SaleId:    listing.Id,
 			Price:     convertPrice(listing.Price),
 			Condition: listing.Condition,
+			Posted:    parseTimeNano(listing.Posted),
 		})
 	}
 
@@ -340,6 +342,17 @@ func parseTime(tstr string) int64 {
 		return 0
 	}
 	return t.Unix()
+}
+
+func parseTimeNano(tstr string) int64 {
+	if tstr == "" {
+		return 0
+	}
+	t, err := time.Parse(time.RFC3339, tstr)
+	if err != nil {
+		return 0
+	}
+	return t.UnixNano()
 }
 
 func convertOrder(o *OrderResponse) *pb.Order {
@@ -434,6 +447,7 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 		Status:    convertStatus(gsr.Status),
 		ReleaseId: (gsr.Release.Id),
 		Condition: gsr.Condition,
+		Posted:    parseTimeNano(gsr.Posted),
 	}, nil
 }
 
