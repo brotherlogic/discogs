@@ -8,22 +8,26 @@ import (
 
 func TestSaleItemProto(t *testing.T) {
 	var nilSaleItem *SaleItem
-	if nilSaleItem.GetSaleId() != 0 || nilSaleItem.GetStatus() != SaleStatus_UNKNOWN || nilSaleItem.GetPrice() != nil || nilSaleItem.GetReleaseId() != 0 || nilSaleItem.GetCondition() != "" || nilSaleItem.GetPosted() != 0 {
+	if nilSaleItem.GetSaleId() != 0 || nilSaleItem.GetStatus() != SaleStatus_UNKNOWN || nilSaleItem.GetPrice() != nil || nilSaleItem.GetReleaseId() != 0 || nilSaleItem.GetCondition() != "" || nilSaleItem.GetPosted() != 0 || nilSaleItem.GetSleeveCondition() != "" {
 		t.Errorf("nil SaleItem getter returned unexpected non-zero value")
 	}
 
 	postedNano := int64(1465079412000000000)
 	item := &SaleItem{
-		SaleId:    4396720221,
-		Status:    SaleStatus_FOR_SALE,
-		Price:     &Price{Currency: "USD", Value: 1999},
-		ReleaseId: 556184,
-		Condition: "Near Mint (NM or M-)",
-		Posted:    postedNano,
+		SaleId:          4396720221,
+		Status:          SaleStatus_FOR_SALE,
+		Price:           &Price{Currency: "USD", Value: 1999},
+		ReleaseId:       556184,
+		Condition:       "Near Mint (NM or M-)",
+		Posted:          postedNano,
+		SleeveCondition: "Very Good Plus (VG+)",
 	}
 
 	if item.GetPosted() != postedNano {
 		t.Errorf("Expected posted %d, got %d", postedNano, item.GetPosted())
+	}
+	if item.GetSleeveCondition() != "Very Good Plus (VG+)" {
+		t.Errorf("Expected sleeve_condition Very Good Plus (VG+), got %q", item.GetSleeveCondition())
 	}
 
 	data, err := proto.Marshal(item)
@@ -54,12 +58,15 @@ func TestSaleItemProto(t *testing.T) {
 	if roundTrip.GetPosted() != postedNano {
 		t.Errorf("Expected posted %d after round-trip, got %d", postedNano, roundTrip.GetPosted())
 	}
+	if roundTrip.GetSleeveCondition() != "Very Good Plus (VG+)" {
+		t.Errorf("Expected sleeve_condition Very Good Plus (VG+) after round-trip, got %q", roundTrip.GetSleeveCondition())
+	}
 
 	_, _ = roundTrip.Descriptor()
 	roundTrip.ProtoMessage()
 	roundTrip.Reset()
-	if roundTrip.GetPosted() != 0 {
-		t.Errorf("Reset failed to clear Posted field")
+	if roundTrip.GetPosted() != 0 || roundTrip.GetSleeveCondition() != "" {
+		t.Errorf("Reset failed to clear SaleItem fields")
 	}
 }
 
@@ -281,13 +288,14 @@ func TestAllProtosCoverage(t *testing.T) {
 	_ = nilPr.GetValue()
 	pr.Reset()
 
-	si := &SaleItem{SaleId: 1, Status: SaleStatus_FOR_SALE, Price: pr, ReleaseId: 2, Condition: "VG+", Posted: 123456789}
+	si := &SaleItem{SaleId: 1, Status: SaleStatus_FOR_SALE, Price: pr, ReleaseId: 2, Condition: "VG+", Posted: 123456789, SleeveCondition: "VG+"}
 	_ = si.GetSaleId()
 	_ = si.GetStatus()
 	_ = si.GetPrice()
 	_ = si.GetReleaseId()
 	_ = si.GetCondition()
 	_ = si.GetPosted()
+	_ = si.GetSleeveCondition()
 	_ = si.String()
 	_ = si.ProtoReflect()
 	var nilSi *SaleItem
@@ -297,6 +305,7 @@ func TestAllProtosCoverage(t *testing.T) {
 	_ = nilSi.GetReleaseId()
 	_ = nilSi.GetCondition()
 	_ = nilSi.GetPosted()
+	_ = nilSi.GetSleeveCondition()
 	si.Reset()
 
 	art := &Artist{Name: "Artist", Id: 1}
