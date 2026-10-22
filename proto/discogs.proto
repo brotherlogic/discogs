@@ -99,6 +99,7 @@ message SaleItem {
     int64 release_id = 4;
     string condition = 5;
     int64 posted = 6;
+    string sleeve_condition = 7;
 }
 
 message Artist {

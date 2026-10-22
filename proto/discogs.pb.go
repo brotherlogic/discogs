@@ -787,15 +787,16 @@ func (x *Price) GetValue() int32 {
 }
 
 type SaleItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SaleId        int64                  `protobuf:"varint,1,opt,name=sale_id,json=saleId,proto3" json:"sale_id,omitempty"`
-	Status        SaleStatus             `protobuf:"varint,2,opt,name=status,proto3,enum=discogs.SaleStatus" json:"status,omitempty"`
-	Price         *Price                 `protobuf:"bytes,3,opt,name=price,proto3" json:"price,omitempty"`
-	ReleaseId     int64                  `protobuf:"varint,4,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
-	Condition     string                 `protobuf:"bytes,5,opt,name=condition,proto3" json:"condition,omitempty"`
-	Posted        int64                  `protobuf:"varint,6,opt,name=posted,proto3" json:"posted,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SaleId          int64                  `protobuf:"varint,1,opt,name=sale_id,json=saleId,proto3" json:"sale_id,omitempty"`
+	Status          SaleStatus             `protobuf:"varint,2,opt,name=status,proto3,enum=discogs.SaleStatus" json:"status,omitempty"`
+	Price           *Price                 `protobuf:"bytes,3,opt,name=price,proto3" json:"price,omitempty"`
+	ReleaseId       int64                  `protobuf:"varint,4,opt,name=release_id,json=releaseId,proto3" json:"release_id,omitempty"`
+	Condition       string                 `protobuf:"bytes,5,opt,name=condition,proto3" json:"condition,omitempty"`
+	Posted          int64                  `protobuf:"varint,6,opt,name=posted,proto3" json:"posted,omitempty"`
+	SleeveCondition string                 `protobuf:"bytes,7,opt,name=sleeve_condition,json=sleeveCondition,proto3" json:"sleeve_condition,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *SaleItem) Reset() {
@@ -868,6 +869,13 @@ func (x *SaleItem) GetPosted() int64 {
 		return x.Posted
 	}
 	return 0
+}
+
+func (x *SaleItem) GetSleeveCondition() string {
+	if x != nil {
+		return x.SleeveCondition
+	}
+	return ""
 }
 
 type Artist struct {
@@ -1429,7 +1437,7 @@ const file_discogs_proto_rawDesc = "" +
 	"\x05catno\x18\x03 \x01(\tR\x05catno\"9\n" +
 	"\x05Price\x12\x1a\n" +
 	"\bcurrency\x18\x01 \x01(\tR\bcurrency\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value\"\xcb\x01\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value\"\xf6\x01\n" +
 	"\bSaleItem\x12\x17\n" +
 	"\asale_id\x18\x01 \x01(\x03R\x06saleId\x12+\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x13.discogs.SaleStatusR\x06status\x12$\n" +
@@ -1437,7 +1445,8 @@ const file_discogs_proto_rawDesc = "" +
 	"\n" +
 	"release_id\x18\x04 \x01(\x03R\treleaseId\x12\x1c\n" +
 	"\tcondition\x18\x05 \x01(\tR\tcondition\x12\x16\n" +
-	"\x06posted\x18\x06 \x01(\x03R\x06posted\",\n" +
+	"\x06posted\x18\x06 \x01(\x03R\x06posted\x12)\n" +
+	"\x10sleeve_condition\x18\a \x01(\tR\x0fsleeveCondition\",\n" +
 	"\x06Artist\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"W\n" +
