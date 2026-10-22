@@ -76,9 +76,26 @@ func TestGetSale_Success(t *testing.T) {
 		t.Errorf("Bad sale condition: %v", sale.GetCondition())
 	}
 
+	if sale.GetSleeveCondition() != "Not Graded" {
+		t.Errorf("Bad sale sleeve condition: expected %q, got %q", "Not Graded", sale.GetSleeveCondition())
+	}
+
 	expectedPosted, _ := time.Parse(time.RFC3339, "2023-08-29T17:23:17-07:00")
 	if sale.GetPosted() != expectedPosted.UnixNano() {
 		t.Errorf("Bad sale posted timestamp: expected %v, got %v", expectedPosted.UnixNano(), sale.GetPosted())
+	}
+}
+
+func TestGetSale_SleeveCondition(t *testing.T) {
+	td := GetTestDiscogs()
+
+	sale, err := td.GetSale(context.Background(), 2695553917)
+	if err != nil {
+		t.Fatalf("Error getting sale: %v", err)
+	}
+
+	if sale.GetSleeveCondition() != "Not Graded" {
+		t.Errorf("Expected sleeve_condition %q, got %q", "Not Graded", sale.GetSleeveCondition())
 	}
 }
 
@@ -250,10 +267,32 @@ func TestListSales_PerPage100(t *testing.T) {
 	expectedPosted, _ := time.Parse(time.RFC3339, "2018-08-15T16:53:12-07:00")
 	for _, sale := range sales {
 		if sale.GetReleaseId() == 9624074 {
-			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 || sale.GetCondition() != "Very Good Plus (VG+)" || sale.GetPosted() != expectedPosted.UnixNano() {
+			if sale.GetStatus() != pb.SaleStatus_SOLD || sale.GetSaleId() != 769427368 || sale.GetPrice().GetValue() != 1363 || sale.GetCondition() != "Very Good Plus (VG+)" || sale.GetSleeveCondition() != "Very Good Plus (VG+)" || sale.GetPosted() != expectedPosted.UnixNano() {
 				t.Errorf("No sale id returned: %v", sale)
 			}
 		}
+	}
+}
+
+func TestListSales_SleeveCondition(t *testing.T) {
+	td := GetTestDiscogs()
+
+	sales, _, err := td.ListSales(context.Background(), 1)
+	if err != nil {
+		t.Fatalf("Failed to list sales: %v", err)
+	}
+
+	found := false
+	for _, sale := range sales {
+		if sale.GetReleaseId() == 9624074 {
+			found = true
+			if sale.GetSleeveCondition() != "Very Good Plus (VG+)" {
+				t.Errorf("Expected sleeve_condition %q, got %q", "Very Good Plus (VG+)", sale.GetSleeveCondition())
+			}
+		}
+	}
+	if !found {
+		t.Fatalf("Expected release 9624074 in ListSales response")
 	}
 }
 

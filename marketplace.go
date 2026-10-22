@@ -26,12 +26,13 @@ type Price struct {
 }
 
 type GetSaleResponse struct {
-	Status    string
-	Id        int64
-	Release   Release
-	Price     Price
-	Condition string
-	Posted    string `json:"posted"`
+	Status          string
+	Id              int64
+	Release         Release
+	Price           Price
+	Condition       string
+	SleeveCondition string `json:"sleeve_condition"`
+	Posted          string `json:"posted"`
 }
 
 type Release struct {
@@ -298,12 +299,13 @@ func (p *prodClient) ListSales(ctx context.Context, page int32) ([]*pb.SaleItem,
 	var listings []*pb.SaleItem
 	for _, listing := range cr.Listings {
 		listings = append(listings, &pb.SaleItem{
-			ReleaseId: listing.Release.Id,
-			Status:    convertStatus(listing.Status),
-			SaleId:    listing.Id,
-			Price:     convertPrice(listing.Price),
-			Condition: listing.Condition,
-			Posted:    parseTimeNano(listing.Posted),
+			ReleaseId:       listing.Release.Id,
+			Status:          convertStatus(listing.Status),
+			SaleId:          listing.Id,
+			Price:           convertPrice(listing.Price),
+			Condition:       listing.Condition,
+			SleeveCondition: listing.SleeveCondition,
+			Posted:          parseTimeNano(listing.Posted),
 		})
 	}
 
@@ -444,10 +446,11 @@ func (p *prodClient) GetSale(ctx context.Context, saleId int64) (*pb.SaleItem, e
 	}
 
 	return &pb.SaleItem{
-		Status:    convertStatus(gsr.Status),
-		ReleaseId: (gsr.Release.Id),
-		Condition: gsr.Condition,
-		Posted:    parseTimeNano(gsr.Posted),
+		Status:          convertStatus(gsr.Status),
+		ReleaseId:       (gsr.Release.Id),
+		Condition:       gsr.Condition,
+		SleeveCondition: gsr.SleeveCondition,
+		Posted:          parseTimeNano(gsr.Posted),
 	}, nil
 }
 
